@@ -142,6 +142,10 @@ namespace storm {
             /// built in case the exploration order is not BFS.
             boost::optional<std::vector<uint_fast64_t>> stateRemapping;
 
+            boost::optional<std::vector<EventVariableInformation>> eventVariables;
+            boost::optional<std::map<uint_fast64_t, std::vector<uint_fast64_t>>> eventToStatesMapping;
+            boost::optional<std::map<uint_fast64_t, std::vector<uint_fast64_t>>> stateToEventsMapping;
+
         };
         
     } // namespace adapters

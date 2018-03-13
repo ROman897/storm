@@ -163,6 +163,21 @@ namespace storm {
         std::size_t Choice<ValueType, StateType>::size() const {
             return distribution.size();
         }
+
+        template<typename ValueType, typename StateType>
+        bool Choice<ValueType, StateType>::hasEvent() const {
+            return static_cast<bool>(eventName);
+        }
+
+        template<typename ValueType, typename StateType>
+        std::string const& Choice<ValueType, StateType>::getEventName() const {
+            return eventName.get();
+        }
+
+        template<typename ValueType, typename StateType>
+        void Choice<ValueType, StateType>::setEvent(std::string const& event) {
+            eventName = event;
+        }
         
         template<typename ValueType, typename StateType>
         std::ostream& operator<<(std::ostream& out, Choice<ValueType, StateType> const& choice) {

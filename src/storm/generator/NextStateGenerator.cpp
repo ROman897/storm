@@ -154,6 +154,12 @@ namespace storm {
             return nullptr;
         }
 
+        template<typename ValueType, typename StateType>
+        void NextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation>& eventVariables, std::map<std::string, uint_fast64_t>& eventNameToId) const {
+            // intentionally left empty
+        }
+
+
         template class NextStateGenerator<double>;
 
 #ifdef STORM_HAVE_CARL

@@ -28,7 +28,8 @@ namespace storm {
             DTMC,
             CTMC,
             MDP,
-            MA
+            MA,
+            GSMP
         };
         
         template<typename ValueType, typename StateType = uint32_t>
@@ -66,6 +67,8 @@ namespace storm {
             NextStateGeneratorOptions const& getOptions() const;
             
             virtual std::shared_ptr<storm::storage::sparse::ChoiceOrigins> generateChoiceOrigins(std::vector<boost::any>& dataForChoiceOrigins) const;
+
+            virtual void mapEvents(std::vector<EventVariableInformation>& eventVariables, std::map<std::string, uint_fast64_t>& eventNameToId) const;
             
         protected:
             /*!

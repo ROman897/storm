@@ -55,6 +55,7 @@ namespace storm {
             std::vector<storm::prism::Formula> formulas;
             std::vector<storm::prism::BooleanVariable> globalBooleanVariables;
             std::vector<storm::prism::IntegerVariable> globalIntegerVariables;
+            
             std::map<std::string, uint_fast64_t> moduleToIndexMap;
             std::map<std::string, uint_fast64_t> actionIndices;
             std::vector<storm::prism::Module> modules;
@@ -96,7 +97,10 @@ namespace storm {
                     ("ctmc", storm::prism::Program::ModelType::CTMC)
                     ("mdp", storm::prism::Program::ModelType::MDP)
                     ("ctmdp", storm::prism::Program::ModelType::CTMDP)
-                    ("ma", storm::prism::Program::ModelType::MA);
+                    ("ma", storm::prism::Program::ModelType::MA)
+                    // Roman modification
+                    ("gsmp", storm::prism::Program::ModelType::GSMP);
+                    // end mod
                 }
             };
             
@@ -122,7 +126,16 @@ namespace storm {
                     ("floor", 17)
                     ("ceil", 18)
                     ("init", 19)
-                    ("endinit", 20);
+                    ("endinit", 20)
+                    // Roman modification
+                    ("gsmp", 21)
+                    ("distribution", 22)
+                    ("event", 23)
+                    ("exp", 24)
+                    ("weibull", 25)
+                    ("uniform", 26)
+                    ("dirac", 27);
+                    // end mod
                 }
             };
             
@@ -194,10 +207,16 @@ namespace storm {
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedBooleanConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedIntegerConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedDoubleConstantDefinition;
+            // Roman code
+            qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedNonlinearDistributionConstantDefinition;
+            // end code
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedBooleanConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedIntegerConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedDoubleConstantDefinition;
+            // Roman code
+            qi::rule<Iterator, storm::prism::Constant(), Skipper> definedNonlinearDistributionConstantDefinition;
+            // end code
             
             // Rules for global variable definitions.
             qi::rule<Iterator, qi::unused_type(GlobalProgramInformation&), Skipper> globalVariableDefinition;
@@ -206,14 +225,24 @@ namespace storm {
             
             // Rules for modules definition.
             qi::rule<Iterator, std::vector<storm::prism::Module>(GlobalProgramInformation&), Skipper> moduleDefinitionList;
-            qi::rule<Iterator, storm::prism::Module(GlobalProgramInformation&), qi::locals<std::vector<storm::prism::BooleanVariable>, std::vector<storm::prism::IntegerVariable>>, Skipper> moduleDefinition;
+            qi::rule<Iterator, storm::prism::Module(GlobalProgramInformation&), qi::locals<std::vector<storm::prism::BooleanVariable>, std::vector<storm::prism::IntegerVariable>, std::vector<storm::prism::EventVariable>>, Skipper> moduleDefinition;
             qi::rule<Iterator, storm::prism::Module(GlobalProgramInformation&), qi::locals<std::map<std::string, std::string>>, Skipper> moduleRenaming;
             
             // Rules for variable definitions.
-            qi::rule<Iterator, qi::unused_type(std::vector<storm::prism::BooleanVariable>&, std::vector<storm::prism::IntegerVariable>&), Skipper> variableDefinition;
+            qi::rule<Iterator, qi::unused_type(std::vector<storm::prism::BooleanVariable>&, std::vector<storm::prism::IntegerVariable>&, std::vector<storm::prism::EventVariable>&), Skipper> variableDefinition;
             qi::rule<Iterator, storm::prism::BooleanVariable(), qi::locals<storm::expressions::Expression>, Skipper> booleanVariableDefinition;
             qi::rule<Iterator, storm::prism::IntegerVariable(), qi::locals<storm::expressions::Expression>, Skipper> integerVariableDefinition;
+
+            // Roman code
+            // used for declaring an event variable
+            qi::rule<Iterator, storm::prism::EventVariable(), Skipper> eventVariableDefinition;
+            // end code
             
+            // Roman code
+            // used for parsing event name inside of a command
+            qi::rule<Iterator, std::string(), Skipper> eventCommandParser;
+            // end code
+
             // Rules for command definitions.
             qi::rule<Iterator, storm::prism::Command(GlobalProgramInformation&), qi::locals<bool>, Skipper> commandDefinition;
             qi::rule<Iterator, std::vector<storm::prism::Update>(GlobalProgramInformation&), Skipper> updateListDefinition;
@@ -279,22 +308,26 @@ namespace storm {
             storm::prism::Constant createUndefinedBooleanConstant(std::string const& newConstant) const;
             storm::prism::Constant createUndefinedIntegerConstant(std::string const& newConstant) const;
             storm::prism::Constant createUndefinedDoubleConstant(std::string const& newConstant) const;
+            storm::prism::Constant createUndefinedNonlinearDistributionConstant(std::string const& newConstant) const;
             storm::prism::Constant createDefinedBooleanConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
             storm::prism::Constant createDefinedIntegerConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
             storm::prism::Constant createDefinedDoubleConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
+            storm::prism::Constant createDefinedNonlinearDistributionConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
             storm::prism::Formula createFormula(std::string const& formulaName, storm::expressions::Expression expression);
             storm::prism::Label createLabel(std::string const& labelName, storm::expressions::Expression expression) const;
+            storm::prism::EventVariable createEventVariable(std::string const& eventName, storm::expressions::Expression expression) const;
+
             storm::prism::RewardModel createRewardModel(std::string const& rewardModelName, std::vector<storm::prism::StateReward> const& stateRewards, std::vector<storm::prism::StateActionReward> const& stateActionRewards, std::vector<storm::prism::TransitionReward> const& transitionRewards) const;
             storm::prism::StateReward createStateReward(storm::expressions::Expression statePredicateExpression, storm::expressions::Expression rewardValueExpression) const;
             storm::prism::StateActionReward createStateActionReward(boost::optional<std::string> const& actionName, storm::expressions::Expression statePredicateExpression, storm::expressions::Expression rewardValueExpression, GlobalProgramInformation& globalProgramInformation) const;
             storm::prism::TransitionReward createTransitionReward(boost::optional<std::string> const& actionName, storm::expressions::Expression sourceStatePredicateExpression, storm::expressions::Expression targetStatePredicateExpression, storm::expressions::Expression rewardValueExpression, GlobalProgramInformation& globalProgramInformation) const;
             storm::prism::Assignment createAssignment(std::string const& variableName, storm::expressions::Expression assignedExpression) const;
             storm::prism::Update createUpdate(storm::expressions::Expression likelihoodExpression, std::vector<storm::prism::Assignment> const& assignments, GlobalProgramInformation& globalProgramInformation) const;
-            storm::prism::Command createCommand(bool markovianCommand, boost::optional<std::string> const& actionName, storm::expressions::Expression guardExpression, std::vector<storm::prism::Update> const& updates, GlobalProgramInformation& globalProgramInformation) const;
+            storm::prism::Command createCommand(bool markovianCommand, boost::optional<std::string> const& actionName, storm::expressions::Expression guardExpression, boost::optional<std::string> const& eventName, std::vector<storm::prism::Update> const& updates, GlobalProgramInformation& globalProgramInformation) const;
             storm::prism::Command createDummyCommand(boost::optional<std::string> const& actionName, GlobalProgramInformation& globalProgramInformation) const;
             storm::prism::BooleanVariable createBooleanVariable(std::string const& variableName, storm::expressions::Expression initialValueExpression) const;
             storm::prism::IntegerVariable createIntegerVariable(std::string const& variableName, storm::expressions::Expression lowerBoundExpression, storm::expressions::Expression upperBoundExpression, storm::expressions::Expression initialValueExpression) const;
-            storm::prism::Module createModule(std::string const& moduleName, std::vector<storm::prism::BooleanVariable> const& booleanVariables, std::vector<storm::prism::IntegerVariable> const& integerVariables, std::vector<storm::prism::Command> const& commands, GlobalProgramInformation& globalProgramInformation) const;
+            storm::prism::Module createModule(std::string const& moduleName, std::vector<storm::prism::BooleanVariable> const& booleanVariables, std::vector<storm::prism::IntegerVariable> const& integerVariables, std::vector<storm::prism::EventVariable> const& eventVariables, std::vector<storm::prism::Command> const& commands, GlobalProgramInformation& globalProgramInformation) const;
             storm::prism::Module createRenamedModule(std::string const& newModuleName, std::string const& oldModuleName, std::map<std::string, std::string> const& renaming, GlobalProgramInformation& globalProgramInformation) const;
             storm::prism::Program createProgram(GlobalProgramInformation const& globalProgramInformation) const;
             

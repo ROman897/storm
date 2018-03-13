@@ -7,6 +7,7 @@
 #include "storm/storage/expressions/OperatorType.h"
 
 #include "storm/adapters/RationalNumberAdapter.h"
+#include "storm/storage/expressions/NonlinearDistributionTypes.h"
 
 namespace storm {
     namespace expressions {
@@ -199,6 +200,20 @@ namespace storm {
                 }
             };
 
+            // Roman code
+            struct distributionOperatorStruct : qi::symbols<char, storm::expressions::NonlinearDistributionTypes> {
+                distributionOperatorStruct() {
+                    add
+                    ("exp", storm::expressions::NonlinearDistributionTypes::Exp)
+                    ("weibul", storm::expressions::NonlinearDistributionTypes::Weibul)
+                    ("uniform", storm::expressions::NonlinearDistributionTypes::Uniform)
+                    ("dirac", storm::expressions::NonlinearDistributionTypes::Dirac);
+                }
+            };
+
+            // parser for regognizing operators at the distributions precendence level
+            distributionOperatorStruct distributionOperatorStruct_;
+
             // A parser used for recognizing the operators at the "power" precedence level.
             prefixPowerOperatorStruct prefixPowerOperator_;
             
@@ -227,6 +242,9 @@ namespace storm {
             qi::rule<Iterator, storm::expressions::Expression(), qi::locals<storm::expressions::OperatorType>, Skipper> minMaxExpression;
             qi::rule<Iterator, storm::expressions::Expression(), qi::locals<storm::expressions::OperatorType>, Skipper> floorCeilExpression;
             qi::rule<Iterator, std::string(), Skipper> identifier;
+            // roman code
+            qi::rule<Iterator, storm::expressions::Expression(), qi::locals<bool>, Skipper> distributionExpression;
+
             
             // Parser that is used to recognize doubles only (as opposed to Spirit's double_ parser).
             boost::spirit::qi::real_parser<storm::RationalNumber, RationalPolicies<storm::RationalNumber>> rationalLiteral_;

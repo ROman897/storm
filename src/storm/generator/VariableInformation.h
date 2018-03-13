@@ -4,7 +4,7 @@
 #include <vector>
 #include <boost/container/flat_map.hpp>
 
-#include "storm/storage/expressions/Variable.h"
+#include "storm/storage/expressions/Variable.h" 
 
 namespace storm {
     namespace prism {
@@ -53,6 +53,11 @@ namespace storm {
             
             // A flag indicating whether the variable is a global one.
             bool global;
+        };
+
+        // A structure storing information about the event variables of the model.
+        struct EventVariableInformation {
+            EventVariableInformation();
         };
         
         // A structure storing information about the location variables of the model.

@@ -149,6 +149,12 @@ namespace storm {
              * Retrieves the size of the distribution associated with this choice.
              */
             std::size_t size() const;
+
+            bool hasEvent() const;
+
+            std::string const& getEventName() const;
+
+            void setEvent(std::string const& event);
             
         private:
             // A flag indicating whether this choice is Markovian or not.
@@ -171,6 +177,8 @@ namespace storm {
             
             // The labels of this choice
             boost::optional<std::set<std::string>> labels;
+
+            boost::optional<std::string> eventName;
         };
 
         template<typename ValueType, typename StateType>

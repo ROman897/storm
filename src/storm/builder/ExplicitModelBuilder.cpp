@@ -75,6 +75,8 @@ namespace storm {
                     return storm::utility::builder::buildModelFromComponents(storm::models::ModelType::Mdp, buildModelComponents());
                 case storm::generator::ModelType::MA:
                     return storm::utility::builder::buildModelFromComponents(storm::models::ModelType::MarkovAutomaton, buildModelComponents());
+                case storm::generator::ModelType::GSMP:
+                    return storm::utility::builder::buildModelFromComponents(storm::models::ModelType::Gsmp, buildModelComponents());    
                 default:
                     STORM_LOG_THROW(false, storm::exceptions::WrongFormatException, "Error while creating model: cannot handle this model type.");
             }
@@ -131,6 +133,16 @@ namespace storm {
             uint_fast64_t currentRowGroup = 0;
             uint_fast64_t currentRow = 0;
 
+            bool shouldMapEvents = generator->getModelType() == storm::generator::ModelType::GSMP;
+            // mapping from event id -> index of row in the matrix if present 
+            std::map<std::string, uint_fast64_t> eventNameToId;
+            if (shouldMapEvents) {
+                eventToStatesMapping = std::map<uint_fast64_t, std::vector<uint_fast64_t>>();
+                stateToEventsMapping = std::map<uint_fast64_t, std::vector<uint_fast64_t>>();
+                eventVariables = std::vector<EventVariableInformation>();
+                generator->mapEvents(eventVariables.get(), eventNameToId);
+            }
+
             auto timeOfStart = std::chrono::high_resolution_clock::now();
             auto timeOfLastMessage = std::chrono::high_resolution_clock::now();
             uint64_t numberOfExploredStates = 0;
@@ -148,6 +160,7 @@ namespace storm {
                 if (options.explorationOrder != ExplorationOrder::Bfs) {
                     stateRemapping.get()[currentIndex] = currentRowGroup;
                 }
+
                 
                 STORM_LOG_TRACE("Exploring state with id " << currentIndex << ".");
                 
@@ -156,6 +169,7 @@ namespace storm {
                 
                 // If there is no behavior, we might have to introduce a self-loop.
                 if (behavior.empty()) {
+                    // TODO(Roman): create event for deadlock transition?
                     if (!storm::settings::getModule<storm::settings::modules::CoreSettings>().isDontFixDeadlocksSet() || !behavior.wasExpanded()) {
                         // If the behavior was actually expanded and yet there are no transitions, then we have a deadlock state.
                         if (behavior.wasExpanded()) {
@@ -203,6 +217,10 @@ namespace storm {
                         transitionMatrixBuilder.newRowGroup(currentRow);
                     }
                     
+                    // Roman: behavior will now contain multiple choices, one
+                    // for each event active in the current state
+                    // add every choice as a new row into the matrix.
+
                     // Now add all choices.
                     for (auto const& choice : behavior) {
                         
@@ -225,6 +243,23 @@ namespace storm {
                         // Add the probabilistic behavior to the matrix.
                         for (auto const& stateProbabilityPair : choice) {
                             transitionMatrixBuilder.addNextValue(currentRow, stateProbabilityPair.first, stateProbabilityPair.second);
+                        }
+
+                        if (shouldMapEvents && choice.hasEvent()) {
+                            std::string const& eventName = choice.getEventName();
+                            // STORM_LOG_WARN("found event: " << eventName << std::endl);
+                            auto it = eventNameToId.find(eventName);
+                            if (it == eventNameToId.end()) {
+                                STORM_LOG_WARN("not found event name: " << eventName << std::endl);
+                            } else {
+                                STORM_LOG_WARN("found event name: " << eventName << std::endl);
+                            }
+                            STORM_LOG_THROW(it != eventNameToId.end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
+
+                            uint_fast64_t eventId = it->second;
+
+                            eventToStatesMapping.get()[eventId].push_back(currentRow);
+                            stateToEventsMapping.get()[currentIndex].push_back(eventId);
                         }
                         
                         // Add the rewards to the reward models.
@@ -306,7 +341,9 @@ namespace storm {
             
             // initialize the model components with the obtained information.
             storm::storage::sparse::ModelComponents<ValueType, RewardModelType> modelComponents(transitionMatrixBuilder.build(), buildStateLabeling(), std::unordered_map<std::string, RewardModelType>(), !generator->isDiscreteTimeModel(), std::move(markovianStates));
-            
+            modelComponents.eventVariables = std::move(eventVariables);
+            modelComponents.eventToStatesMapping = std::move(eventToStatesMapping);
+            modelComponents.stateToEventsMapping = std::move(stateToEventsMapping); 
             // Now finalize all reward models.
             for (auto& rewardModelBuilder : rewardModelBuilders) {
                 modelComponents.rewardModels.emplace(rewardModelBuilder.getName(), rewardModelBuilder.build(modelComponents.transitionMatrix.getRowCount(), modelComponents.transitionMatrix.getColumnCount(), modelComponents.transitionMatrix.getRowGroupCount()));

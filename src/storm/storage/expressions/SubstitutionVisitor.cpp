@@ -119,6 +119,19 @@ namespace storm {
         boost::any SubstitutionVisitor<MapType>::visit(RationalLiteralExpression const& expression, boost::any const&) {
             return expression.getSharedPointer();
         }
+
+        // Roman Code
+        template <typename MapType>
+        boost::any SubstitutionVisitor<MapType>::visit(NonlinearDistributionExpression const& expression, boost::any const& data) {
+
+            std::shared_ptr<BaseExpression const> firstExpression = boost::any_cast<std::shared_ptr<BaseExpression const>>(expression.getParam1()->accept(*this, data));
+            if (expression.getArity() == 2) {
+                std::shared_ptr<BaseExpression const> secondExpression = boost::any_cast<std::shared_ptr<BaseExpression const>>(expression.getParam2()->accept(*this, data));
+                return std::const_pointer_cast<BaseExpression const>(std::shared_ptr<BaseExpression>(new NonlinearDistributionExpression(expression.getManager(), expression.getDistributionType(), firstExpression, secondExpression)));
+            }
+            return std::const_pointer_cast<BaseExpression const>(std::shared_ptr<BaseExpression>(new NonlinearDistributionExpression(expression.getManager(), expression.getDistributionType(), firstExpression)));
+        }
+
         
         // Explicitly instantiate the class with map and unordered_map.
 		template class SubstitutionVisitor<std::map<Variable, Expression>>;

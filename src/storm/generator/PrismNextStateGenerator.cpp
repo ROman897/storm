@@ -117,6 +117,7 @@ namespace storm {
                 case storm::prism::Program::ModelType::CTMC: return ModelType::CTMC;
                 case storm::prism::Program::ModelType::MDP: return ModelType::MDP;
                 case storm::prism::Program::ModelType::MA: return ModelType::MA;
+                case storm::prism::Program::ModelType::GSMP: return ModelType::GSMP;
                 default:
                     STORM_LOG_THROW(false, storm::exceptions::WrongFormatException, "Invalid model type.");
             }
@@ -131,7 +132,7 @@ namespace storm {
         bool PrismNextStateGenerator<ValueType, StateType>::isDiscreteTimeModel() const {
             return program.isDiscreteTimeModel();
         }
-        
+
         template<typename ValueType, typename StateType>
         std::vector<StateType> PrismNextStateGenerator<ValueType, StateType>::getInitialStates(StateToIdCallback const& stateToIdCallback) {
             // Prepare an SMT solver to enumerate all initial states.
@@ -225,7 +226,8 @@ namespace storm {
             }
             
             // If the model is a deterministic model, we need to fuse the choices into one.
-            if (this->isDeterministicModel() && totalNumberOfChoices > 1) {
+            // if the model is GSMP, we don't fuse choices with different events into one
+            if (this->isDeterministicModel() && totalNumberOfChoices > 1 && this->getModelType() != ModelType::GSMP) {
                 Choice<ValueType> globalChoice;
                 
                 // For CTMCs, we need to keep track of the total exit rate to scale the action rewards later. For DTMCs
@@ -276,6 +278,90 @@ namespace storm {
                 // Move the newly fused choice in place.
                 allChoices.clear();
                 allChoices.push_back(std::move(globalChoice));
+            }
+
+            // Roman Code
+            if (this->getModelType() == ModelType::GSMP && totalNumberOfChoices > 1) {
+                // iterate over all choices and fuse together choices with same event
+                auto runner = allChoices.begin();
+                STORM_LOG_WARN("fusing gsmp choices into one: " << allChoices.size() << std::endl);
+                std::vector<Choice<ValueType>> currentEventChoices;
+                uint_fast64_t lastAction;
+                std::vector<Choice<ValueType>> allEventChoices;
+                bool firstEvent = true;
+                bool stop = false;
+                for (;;) {
+                    if (runner == allChoices.end()) {
+                        stop = true;
+                    }
+                    // if we fused a combination of events such that there is no 
+                    // master event, then skip this one
+                    if (!stop && !runner->hasEvent()) {
+                        ++runner;
+                        continue;
+                    }
+
+                    if (!stop && firstEvent) {
+                        firstEvent = false;
+                        lastAction = runner->getActionIndex();
+                        currentEventChoices.push_back(std::move(*runner));
+                        ++runner;
+                        continue;
+                    }
+
+                    if (stop || lastAction != runner->getActionIndex()) {
+                        // we have come to the last choice with this event name
+                        if (!currentEventChoices.empty()) {
+                            // now finally combine choices into one
+                            Choice<ValueType> eventChoice;
+                            eventChoice.setEvent(currentEventChoices[0].getEventName());
+
+                            for (auto const& choice : currentEventChoices) {
+                                for (auto const& stateProbabilityPair : choice) {
+                                    eventChoice.addProbability(stateProbabilityPair.first, stateProbabilityPair.second / currentEventChoices.size());
+                                }
+
+                                if (this->options.isBuildChoiceLabelsSet() && choice.hasLabels()) {
+                                    eventChoice.addLabels(choice.getLabels());
+                                }
+                    
+                                if (this->options.isBuildChoiceOriginsSet() && choice.hasOriginData()) {
+                                    eventChoice.addOriginData(choice.getOriginData());
+                                }
+                            }
+                            // Now construct the state-action reward for all selected reward models.
+                            for (auto const& rewardModel : rewardModels) {
+                                ValueType stateActionRewardValue = storm::utility::zero<ValueType>();
+                                if (rewardModel.get().hasStateActionRewards()) {
+                                    for (auto const& stateActionReward : rewardModel.get().getStateActionRewards()) {
+                                        for (auto const& choice : currentEventChoices) {
+                                            if (stateActionReward.getActionIndex() == choice.getActionIndex() && this->evaluator->asBool(stateActionReward.getStatePredicateExpression())) {
+                                                stateActionRewardValue += ValueType(this->evaluator->asRational(stateActionReward.getRewardValueExpression())) * choice.getTotalMass();
+                                            }
+                                        }
+                                        
+                                    }
+                                }
+                                if (hasStateActionRewards) {
+                                    eventChoice.addReward(stateActionRewardValue / currentEventChoices.size());
+                                }
+                            }
+
+                            currentEventChoices.clear();
+                            allEventChoices.push_back(std::move(eventChoice));
+                        }
+                        if (stop) {
+                            break;
+                        }
+                        firstEvent = true;
+                        continue;
+                    }
+
+                    // otherwise just add this combination of commands to combine it together later
+                    currentEventChoices.push_back(std::move(*runner));
+                    ++runner;
+                }
+                allChoices = std::move(allEventChoices);
             }
             
             // Move all remaining choices in place.
@@ -396,6 +482,12 @@ namespace storm {
                     
                     result.push_back(Choice<ValueType>(command.getActionIndex(), command.isMarkovian()));
                     Choice<ValueType>& choice = result.back();
+                    if (command.hasEvent()) {
+                        // this way we can differentiate between events with same name that 
+                        // belong to different modules
+                        // STORM_LOG_WARN("setting event: " << command.getEventName() << std::endl);
+                        choice.setEvent("__" + module.getName() + command.getEventName());
+                    }
                     
                     // Remember the choice origin only if we were asked to.
                     if (this->options.isBuildChoiceOriginsSet()) {
@@ -470,8 +562,13 @@ namespace storm {
                         
                         currentTargetStates->emplace(state, storm::utility::one<ValueType>());
                         
+                        boost::optional<std::string> eventName;
                         for (uint_fast64_t i = 0; i < iteratorList.size(); ++i) {
                             storm::prism::Command const& command = *iteratorList[i];
+                            if (command.isMaster()) {
+                                STORM_LOG_THROW(!static_cast<bool>(eventName), storm::exceptions::WrongFormatException, "combination of commands for given label contains more than one master");
+                                eventName = "__" + program.getModule(i).getName() + command.getEventName();
+                            }
                             for (uint_fast64_t j = 0; j < command.getNumberOfUpdates(); ++j) {
                                 storm::prism::Update const& update = command.getUpdate(j);
                                 
@@ -509,6 +606,9 @@ namespace storm {
                         
                         // Now create the actual distribution.
                         Choice<ValueType>& choice = result.back();
+                        if (eventName) {
+                            choice.setEvent(eventName.get());
+                        }
                         
                         // Remember the choice label and origins only if we were asked to.
                         if (this->options.isBuildChoiceLabelsSet()) {
@@ -639,6 +739,18 @@ namespace storm {
             
             return std::make_shared<storm::storage::sparse::PrismChoiceOrigins>(std::make_shared<storm::prism::Program>(program), std::move(identifiers), std::move(identifierToCommandSetMapping));
         }
+
+        template<typename ValueType, typename StateType>
+        void PrismNextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation>& eventVariables, std::map<std::string, uint_fast64_t>& eventNameToId) const {
+            for (auto const& module : program.getModules()) {
+                for (uint_fast64_t i = 0; i < module.getEventVariables().size(); ++i) {
+                    auto const& event = module.getEventVariables()[i];
+                    eventVariables.push_back(EventVariableInformation());
+                    eventNameToId["__" + module.getName() + event.getName()] = i;
+                }
+            }
+        }
+
 
                 
         template class PrismNextStateGenerator<double>;

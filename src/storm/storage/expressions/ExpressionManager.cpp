@@ -79,7 +79,20 @@ namespace storm {
         Expression ExpressionManager::rational(storm::RationalNumber const& value) const {
             return Expression(std::make_shared<RationalLiteralExpression>(*this, value));
         }
-        
+
+        // Roman code
+        /*Expression ExpressionManager::NonlinearDistribution(NonlinearDistributionTypes type, Expression const& exp1, Expression const& exp2) const{
+            // TODO(Roman): not sure if this will be properly used
+            // TODO FIX this does not work as it is
+            return Expression(std::make_shared<NonlinearDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1)), std::shared_ptr<BaseType>( new Expression(exp2))));
+        }*/
+
+        /*Expression ExpressionManager::NonlinearDistribution(NonlinearDistributionTypes type, storm::RationalNumber const& param1) const{
+            // TODO(Roman): not sure if this will be properly used
+            return Expression(std::make_shared<NonlinearDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1))));
+        }*/
+        // end code
+
         bool ExpressionManager::operator==(ExpressionManager const& other) const {
             return this == &other;
         }
@@ -114,6 +127,21 @@ namespace storm {
             }
             return rationalType.get();
         }
+
+        Type const& ExpressionManager::getNonlinearDistributionType() const {
+            if (!nonlinearDistributionType) {
+                nonlinearDistributionType = Type(this->getSharedPointer(), std::shared_ptr<BaseType>(new NonlinearDistributionType()));
+            }
+            return nonlinearDistributionType.get();   
+        }
+
+        Type const& ExpressionManager::getEventType() const {
+            if (!eventType) {
+                eventType = Type(this->getSharedPointer(), std::shared_ptr<BaseType>(new EventType()));
+            }
+            return eventType.get();
+        }
+
         
         bool ExpressionManager::isValidVariableName(std::string const& name) {
             return name.size() < 2 || name.at(0) != '_' || name.at(1) != '_';
@@ -150,6 +178,14 @@ namespace storm {
             return this->declareVariable(name, this->getRationalType(), auxiliary);
         }
 
+        Variable ExpressionManager::declareNonlinearDistributionVariable(std::string const& name, bool auxiliary){
+            return this->declareVariable(name, this->getNonlinearDistributionType(), auxiliary);
+        }
+
+        Variable ExpressionManager::declareEventVariable(std::string const& name, bool auxiliary) {
+            return this->declareVariable(name, this->getEventType(), auxiliary);    
+        }
+
         Variable ExpressionManager::declareOrGetVariable(std::string const& name, storm::expressions::Type const& variableType, bool auxiliary) {
             return declareOrGetVariable(name, variableType, auxiliary, true);
         }
@@ -168,8 +204,13 @@ namespace storm {
                         offset = numberOfIntegerVariables++ + numberOfBitVectorVariables;
                     } else if (variableType.isBitVectorType()) {
                         offset = numberOfBitVectorVariables++ + numberOfIntegerVariables;
-                    } else {
+                    } else if (variableType.isRationalType()) {
                         offset = numberOfRationalVariables++;
+                        // Roman modification
+                    } else if (variableType.isEventDistributionType()) {
+                        offset = numberOfNonlinearDistributionVariables++;
+                    } else if (variableType.isEventType()) {
+                        offset = numberOfEventVariables++;
                     }
                 } else {
                     if (variableType.isBooleanType()) {
@@ -178,8 +219,13 @@ namespace storm {
                         offset = numberOfIntegerVariables++ + numberOfBitVectorVariables;
                     } else if (variableType.isBitVectorType()) {
                         offset = numberOfBitVectorVariables++ + numberOfIntegerVariables;
-                    } else {
+                    } else if (variableType.isRationalType()) {
                         offset = numberOfRationalVariables++;
+                        // Roman modification
+                    } else if (variableType.isEventDistributionType()) {
+                        offset = numberOfNonlinearDistributionVariables++;
+                    } else if (variableType.isEventType()) {
+                        offset = numberOfEventVariables++;
                     }
                 }
                 
@@ -230,6 +276,15 @@ namespace storm {
         Variable ExpressionManager::declareFreshRationalVariable(bool auxiliary, const std::string& prefix) {
             return declareFreshVariable(this->getRationalType(), auxiliary, prefix);
         }
+        // Roman code
+        Variable ExpressionManager::declareFreshNonlinearDistributionVariable(bool auxiliary, const std::string& prefix) {
+            return declareFreshVariable(this->getNonlinearDistributionType(), auxiliary, prefix);
+        }
+
+        Variable ExpressionManager::declareFreshEventVariable(bool auxiliary, std::string const& prefix) {
+            return declareFreshVariable(this->getEventType(), auxiliary, prefix);
+        }
+
         
         uint_fast64_t ExpressionManager::getNumberOfVariables(storm::expressions::Type const& variableType) const {
             if (variableType.isBooleanType()) {
@@ -240,12 +295,16 @@ namespace storm {
                 return numberOfBitVectorVariables;
             } else if (variableType.isRationalType()) {
                 return numberOfRationalVariables;
+                // Roman modification
+            } else if (variableType.isEventDistributionType()){
+                return numberOfNonlinearDistributionVariables;
             }
             return 0;
         }
         
         uint_fast64_t ExpressionManager::getNumberOfVariables() const {
-            return numberOfBooleanVariables + numberOfIntegerVariables + numberOfBitVectorVariables + numberOfRationalVariables;
+            return numberOfBooleanVariables + numberOfIntegerVariables + numberOfBitVectorVariables + 
+            numberOfRationalVariables + numberOfNonlinearDistributionVariables;
         }
         
         uint_fast64_t ExpressionManager::getNumberOfBooleanVariables() const {
@@ -263,6 +322,12 @@ namespace storm {
         uint_fast64_t ExpressionManager::getNumberOfRationalVariables() const {
             return numberOfRationalVariables;
         }
+
+        // Roman code
+        uint_fast64_t ExpressionManager::getNumberOfNonlinearDistributionVariables() const{
+            return numberOfNonlinearDistributionVariables;
+        }
+
         
         std::string const& ExpressionManager::getVariableName(uint_fast64_t index) const {
             auto indexTypeNamePair = indexToNameMapping.find(index);

@@ -9,6 +9,8 @@
 #include "storm/utility/constants.h"
 #include "storm/utility/macros.h"
 
+#include <iostream>
+
 namespace storm {
     namespace parser {
         
@@ -226,6 +228,23 @@ namespace storm {
                 return manager.boolean(false);
             }
         }
+
+        storm::expressions::Expression ExpressionCreator::createDistributionExpression(storm::expressions::NonlinearDistributionTypes type ,storm::expressions::Expression const& e1, boost::optional<storm::expressions::Expression> const& e2, bool& pass) const{
+            if (this->createExpressions) {
+                // std::cout << "before createDistr" << std::endl;
+
+                    // TODO(Roman): this might be a good place to check whether distributed is provided
+                    // required number of parameters
+                    // pass = false;
+                    return storm::expressions::distribution(type, e1, e2);
+                    // return manager.integer(0);
+
+            }
+                // std::cout << "dont create expr" << std::endl;
+            
+            return manager.boolean(false);   
+        }
+
         
         void ExpressionCreator::setIdentifierMapping(qi::symbols<char, storm::expressions::Expression> const* identifiers_) {
             if (identifiers_ != nullptr) {

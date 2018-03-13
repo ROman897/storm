@@ -62,6 +62,17 @@ namespace storm {
         storm::RationalNumber Expression::evaluateAsRational() const {
             return this->getBaseExpression().evaluateAsRational();
         }
+
+        NonlinearDistributionTypes Expression::getDistributionType() const {
+            auto type = getType();
+            STORM_LOG_WARN("expression type at get distribution type: " << type.getStringRepresentation() << std::endl);
+            return this->getBaseExpression().getDistributionType();
+        }
+
+
+        /*storm::NonlinearDistributionLiteralExpression Expression::evaluateAsDistribution() const {
+            return this->getBaseExpression().evaluateAsDistrubution();
+        }*/
         
         Expression Expression::simplify() const {
             return Expression(this->getBaseExpression().simplify());
@@ -178,6 +189,10 @@ namespace storm {
         
         bool Expression::hasBitVectorType() const {
             return this->getBaseExpression().hasBitVectorType();
+        }
+
+        bool Expression::hasDistributionType() const {
+            return this->getBaseExpression().hasEventDistributionType();
         }
         
         boost::any Expression::accept(ExpressionVisitor& visitor, boost::any const& data) const {
@@ -336,6 +351,24 @@ namespace storm {
             assertSameManager(first.getBaseExpression(), second.getBaseExpression());
             return Expression(std::shared_ptr<BaseExpression>(new BinaryNumericalFunctionExpression(first.getBaseExpression().getManager(), first.getType().minimumMaximum(second.getType()), first.getBaseExpressionPointer(), second.getBaseExpressionPointer(), BinaryNumericalFunctionExpression::OperatorType::Max)));
         }
+        // Roman code
+        Expression distribution(NonlinearDistributionTypes type, Expression const& first, boost::optional<Expression> const& second) {
+            // return first;
+            if (second){
+                // std::cout << "Expression::distribution binary" << std::endl;
+                assertSameManager(first.getBaseExpression(), second.get().getBaseExpression());
+                return Expression(std::shared_ptr<BaseExpression>(new NonlinearDistributionExpression(first.getBaseExpression().getManager(), type, first.getBaseExpressionPointer(), second.get().getBaseExpressionPointer())));
+            }
+            auto rx = Expression(std::shared_ptr<BaseExpression>(new NonlinearDistributionExpression(first.getBaseExpression().getManager(), type, first.getBaseExpressionPointer())));
+            // std::cout << "Expression::distribution unary" << std::endl;
+            // std::cout << rx << std::endl;
+            return rx;
+        }
+
+        Expression distribution(NonlinearDistributionTypes type, Expression const& first) {
+            return Expression(std::shared_ptr<BaseExpression>(new NonlinearDistributionExpression(first.getBaseExpression().getManager(), type, first.getBaseExpressionPointer())));
+        }
+
         
         Expression ite(Expression const& condition, Expression const& thenExpression, Expression const& elseExpression) {
             assertSameManager(condition.getBaseExpression(), thenExpression.getBaseExpression());
@@ -349,7 +382,6 @@ namespace storm {
         }
         
         Expression iff(Expression const& first, Expression const& second) {
-            assertSameManager(first.getBaseExpression(), second.getBaseExpression());
             return Expression(std::shared_ptr<BaseExpression>(new BinaryBooleanFunctionExpression(first.getBaseExpression().getManager(), first.getType().logicalConnective(second.getType()), first.getBaseExpressionPointer(), second.getBaseExpressionPointer(), BinaryBooleanFunctionExpression::OperatorType::Iff)));
         }
 

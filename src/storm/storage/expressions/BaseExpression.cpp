@@ -36,6 +36,15 @@ namespace storm {
         bool BaseExpression::hasBooleanType() const {
             return this->getType().isBooleanType();
         }
+
+        bool BaseExpression::hasEventDistributionType() const {
+            return this->getType().isEventDistributionType();
+        }
+
+        NonlinearDistributionTypes BaseExpression::getDistributionType() const {
+            STORM_LOG_THROW(false, storm::exceptions::InvalidTypeException, "querried expression is not a distribution expression");
+        }
+
         
         bool BaseExpression::hasRationalType() const {
             return this->getType().isRationalType();
@@ -57,6 +66,11 @@ namespace storm {
             ToRationalNumberVisitor<storm::RationalNumber> v;
             return v.toRationalNumber(this->toExpression());
         }
+
+        // Roman code
+        /*NonlinearDistributionLiteralExpression BaseExpression::evaluateAsDistribution(Valuation const*) const {
+            STORM_LOG_THROW(false, storm::exceptions::InvalidTypeException, "Unable to evaluate expression as distribution.");
+        }*/
 
         uint_fast64_t BaseExpression::getArity() const {
             return 0;
