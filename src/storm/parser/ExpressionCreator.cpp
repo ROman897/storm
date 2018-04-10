@@ -229,7 +229,7 @@ namespace storm {
             }
         }
 
-        storm::expressions::Expression ExpressionCreator::createDistributionExpression(storm::expressions::NonlinearDistributionTypes type ,storm::expressions::Expression const& e1, boost::optional<storm::expressions::Expression> const& e2, bool& pass) const{
+        storm::expressions::Expression ExpressionCreator::createDistributionExpression(storm::expressions::EventDistributionTypes type ,storm::expressions::Expression const& e1, boost::optional<storm::expressions::Expression> const& e2, bool& pass) const{
             if (this->createExpressions) {
                 // std::cout << "before createDistr" << std::endl;
 

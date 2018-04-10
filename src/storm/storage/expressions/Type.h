@@ -47,7 +47,7 @@ namespace storm {
             virtual bool isEventType() const;
         };
 
-        class NonlinearDistributionType : public BaseType {
+        class EventDistributionType : public BaseType {
         public:
             virtual uint64_t getMask() const override;
             virtual std::string getStringRepresentation() const override;

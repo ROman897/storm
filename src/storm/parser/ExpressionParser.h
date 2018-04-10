@@ -7,7 +7,7 @@
 #include "storm/storage/expressions/OperatorType.h"
 
 #include "storm/adapters/RationalNumberAdapter.h"
-#include "storm/storage/expressions/NonlinearDistributionTypes.h"
+#include "storm/storage/expressions/EventDistributionTypes.h"
 
 namespace storm {
     namespace expressions {
@@ -201,13 +201,13 @@ namespace storm {
             };
 
             // Roman code
-            struct distributionOperatorStruct : qi::symbols<char, storm::expressions::NonlinearDistributionTypes> {
+            struct distributionOperatorStruct : qi::symbols<char, storm::expressions::EventDistributionTypes> {
                 distributionOperatorStruct() {
                     add
-                    ("exp", storm::expressions::NonlinearDistributionTypes::Exp)
-                    ("weibul", storm::expressions::NonlinearDistributionTypes::Weibul)
-                    ("uniform", storm::expressions::NonlinearDistributionTypes::Uniform)
-                    ("dirac", storm::expressions::NonlinearDistributionTypes::Dirac);
+                    ("exp", storm::expressions::EventDistributionTypes::Exp)
+                    ("weibull", storm::expressions::EventDistributionTypes::Weibull)
+                    ("uniform", storm::expressions::EventDistributionTypes::Uniform)
+                    ("dirac", storm::expressions::EventDistributionTypes::Dirac);
                 }
             };
 

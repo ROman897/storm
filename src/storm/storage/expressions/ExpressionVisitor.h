@@ -19,7 +19,7 @@ namespace storm {
         class BooleanLiteralExpression;
         class IntegerLiteralExpression;
         class RationalLiteralExpression;
-        class NonlinearDistributionExpression;
+        class EventDistributionExpression;
         
         class ExpressionVisitor {
         public:
@@ -33,7 +33,7 @@ namespace storm {
             virtual boost::any visit(BooleanLiteralExpression const& expression, boost::any const& data) = 0;
             virtual boost::any visit(IntegerLiteralExpression const& expression, boost::any const& data) = 0;
             virtual boost::any visit(RationalLiteralExpression const& expression, boost::any const& data) = 0;
-            virtual boost::any visit(NonlinearDistributionExpression const& expression, boost::any const& data) {
+            virtual boost::any visit(EventDistributionExpression const& expression, boost::any const& data) {
                 STORM_LOG_THROW(false, storm::exceptions::InvalidArgumentException, "Invalid expression for this visitor.");
             }
         };

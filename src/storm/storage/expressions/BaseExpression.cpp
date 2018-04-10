@@ -41,7 +41,7 @@ namespace storm {
             return this->getType().isEventDistributionType();
         }
 
-        NonlinearDistributionTypes BaseExpression::getDistributionType() const {
+        EventDistributionTypes BaseExpression::getDistributionType() const {
             STORM_LOG_THROW(false, storm::exceptions::InvalidTypeException, "querried expression is not a distribution expression");
         }
 
@@ -68,7 +68,7 @@ namespace storm {
         }
 
         // Roman code
-        /*NonlinearDistributionLiteralExpression BaseExpression::evaluateAsDistribution(Valuation const*) const {
+        /*EventDistributionLiteralExpression BaseExpression::evaluateAsDistribution(Valuation const*) const {
             STORM_LOG_THROW(false, storm::exceptions::InvalidTypeException, "Unable to evaluate expression as distribution.");
         }*/
 

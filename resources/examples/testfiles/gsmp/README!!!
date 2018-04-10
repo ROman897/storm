@@ -1,0 +1,9 @@
+Each folder has a name MODEL_NAME and contains the following.
+- GSMP PRISM model MODEL_NAME.
+- Text file of name "Untitled document" with raw output of the following sequence of PRISM GUI operations for model MODEL_NAME:
+	- model -> view -> states,
+	- model -> view -> transition matrix,
+	- model -> view -> state rewards,
+	- model -> view -> transition rewards,
+	- model -> view -> labels.
+- Optionally, some models have their own readme files. For example, one of them has undefined constants, so you can find them there.

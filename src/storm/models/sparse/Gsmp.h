@@ -52,10 +52,16 @@ namespace storm {
 
                 virtual void reduceToStateBasedRewards() override;
 
+                storm::storage::SparseMatrix<ValueType> getTransitionMatrixForEvent(std::string const& eventName) const;
+
+                bool hasEvent(std::string const& event);
+
             private:
+                std::unordered_map<std::string, uint_fast64_t> eventNameToId;
                 std::vector<generator::EventVariableInformation> eventVariables;
-                std::map<uint_fast64_t, std::vector<uint_fast64_t>> eventToStatesMapping;
-                std::map<uint_fast64_t, std::vector<uint_fast64_t>> stateToEventsMapping;
+                // mapping from event to pair consisting of row group and row number.
+                std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>> eventToStatesMapping;
+                std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>> stateToEventsMapping;
 
 
             };

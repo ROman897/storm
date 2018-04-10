@@ -1,0 +1,5 @@
+This model has 2 undefined constants.
+Before model building, you should be asked by the program to additionally input their values.
+Here are the values I used:
+undefConstant : int = 10
+undefConstant2 : double = 20.0

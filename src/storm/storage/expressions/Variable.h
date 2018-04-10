@@ -142,7 +142,7 @@ namespace storm {
              *
              * @return True iff the variable if of nonlinear distribution type.
              */
-            bool hasNonlinearDistributionType() const;
+            bool hasEventDistributionType() const;
 
         private:
             // The manager that is responsible for this variable.

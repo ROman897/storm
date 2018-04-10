@@ -97,11 +97,11 @@ namespace storm {
             undefinedDoubleConstantDefinition.name("undefined double constant definition");
             
             // Roman code
-            undefinedNonlinearDistributionConstantDefinition = ((qi::lit("const") >> qi::lit("distribution")) > identifier >> qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createUndefinedNonlinearDistributionConstant, phoenix::ref(*this), qi::_1)];
-            undefinedNonlinearDistributionConstantDefinition.name("undefined nonlinear distribution constant definition");
+            undefinedEventDistributionConstantDefinition = ((qi::lit("const") >> qi::lit("distribution")) > identifier >> qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createUndefinedEventDistributionConstant, phoenix::ref(*this), qi::_1)];
+            undefinedEventDistributionConstantDefinition.name("undefined nonlinear distribution constant definition");
             // end
 
-            undefinedConstantDefinition = (undefinedBooleanConstantDefinition | undefinedDoubleConstantDefinition | undefinedIntegerConstantDefinition | undefinedNonlinearDistributionConstantDefinition);
+            undefinedConstantDefinition = (undefinedBooleanConstantDefinition | undefinedDoubleConstantDefinition | undefinedIntegerConstantDefinition | undefinedEventDistributionConstantDefinition);
             undefinedConstantDefinition.name("undefined constant definition");
             
             definedBooleanConstantDefinition = ((qi::lit("const") >> qi::lit("bool") >> identifier >> qi::lit("=")) > expression_ > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createDefinedBooleanConstant, phoenix::ref(*this), qi::_1, qi::_2)];
@@ -114,11 +114,11 @@ namespace storm {
             definedDoubleConstantDefinition.name("defined double constant declaration");
             
             // Roman code
-            definedNonlinearDistributionConstantDefinition = ((qi::lit("const") >> qi::lit("distribution") >> identifier >> qi::lit("=")) > expression_ > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createDefinedNonlinearDistributionConstant, phoenix::ref(*this), qi::_1, qi::_2)];
-            definedNonlinearDistributionConstantDefinition.name("defined nonlinear distribution constant declaration");
+            definedEventDistributionConstantDefinition = ((qi::lit("const") >> qi::lit("distribution") >> identifier >> qi::lit("=")) > expression_ > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createDefinedEventDistributionConstant, phoenix::ref(*this), qi::_1, qi::_2)];
+            definedEventDistributionConstantDefinition.name("defined nonlinear distribution constant declaration");
             // end
 
-            definedConstantDefinition %= (definedBooleanConstantDefinition | definedDoubleConstantDefinition | definedIntegerConstantDefinition | definedNonlinearDistributionConstantDefinition);
+            definedConstantDefinition %= (definedBooleanConstantDefinition | definedDoubleConstantDefinition | definedIntegerConstantDefinition | definedEventDistributionConstantDefinition);
             definedConstantDefinition.name("defined constant definition");
             
             formulaDefinition = (qi::lit("formula") > identifier > qi::lit("=") > expression_ > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createFormula, phoenix::ref(*this), qi::_1, qi::_2)];
@@ -255,11 +255,11 @@ namespace storm {
             qi::on_success(undefinedBooleanConstantDefinition, setLocationInfoFunction);
             qi::on_success(undefinedIntegerConstantDefinition, setLocationInfoFunction);
             qi::on_success(undefinedDoubleConstantDefinition, setLocationInfoFunction);
-            qi::on_success(undefinedNonlinearDistributionConstantDefinition, setLocationInfoFunction);
+            qi::on_success(undefinedEventDistributionConstantDefinition, setLocationInfoFunction);
             qi::on_success(definedBooleanConstantDefinition, setLocationInfoFunction);
             qi::on_success(definedIntegerConstantDefinition, setLocationInfoFunction);
             qi::on_success(definedDoubleConstantDefinition, setLocationInfoFunction);
-            qi::on_success(definedNonlinearDistributionConstantDefinition, setLocationInfoFunction);
+            qi::on_success(definedEventDistributionConstantDefinition, setLocationInfoFunction);
             qi::on_success(booleanVariableDefinition, setLocationInfoFunction);
             qi::on_success(integerVariableDefinition, setLocationInfoFunction);
             qi::on_success(moduleDefinition, setLocationInfoFunction);
@@ -403,10 +403,10 @@ namespace storm {
         }
         
         // Roman code
-        storm::prism::Constant PrismParser::createUndefinedNonlinearDistributionConstant(std::string const& newConstant) const {
+        storm::prism::Constant PrismParser::createUndefinedEventDistributionConstant(std::string const& newConstant) const {
             if (!this->secondRun) {
                 try {
-                    storm::expressions::Variable newVariable = manager->declareNonlinearDistributionVariable(newConstant, false);
+                    storm::expressions::Variable newVariable = manager->declareEventDistributionVariable(newConstant, false);
                     this->identifiers_.add(newConstant, newVariable.getExpression());
                 } catch (storm::exceptions::InvalidArgumentException const& e) {
                     if (manager->hasVariable(newConstant)) {
@@ -470,11 +470,11 @@ namespace storm {
         }
         
         // Roman code
-        storm::prism::Constant PrismParser::createDefinedNonlinearDistributionConstant(std::string const& newConstant, storm::expressions::Expression expression) const {
+        storm::prism::Constant PrismParser::createDefinedEventDistributionConstant(std::string const& newConstant, storm::expressions::Expression expression) const {
             if (!this->secondRun) {
                 try {
                     // std::cout << "before create in manager" << std::endl;
-                    storm::expressions::Variable newVariable = manager->declareNonlinearDistributionVariable(newConstant, true);
+                    storm::expressions::Variable newVariable = manager->declareEventDistributionVariable(newConstant, true);
                     // std::cout << "after create in manager" << std::endl;
                     this->identifiers_.add(newConstant, newVariable.getExpression());
                 } catch (storm::exceptions::InvalidArgumentException const& e) {

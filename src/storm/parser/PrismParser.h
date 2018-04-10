@@ -208,14 +208,14 @@ namespace storm {
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedIntegerConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedDoubleConstantDefinition;
             // Roman code
-            qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedNonlinearDistributionConstantDefinition;
+            qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedEventDistributionConstantDefinition;
             // end code
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedBooleanConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedIntegerConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedDoubleConstantDefinition;
             // Roman code
-            qi::rule<Iterator, storm::prism::Constant(), Skipper> definedNonlinearDistributionConstantDefinition;
+            qi::rule<Iterator, storm::prism::Constant(), Skipper> definedEventDistributionConstantDefinition;
             // end code
             
             // Rules for global variable definitions.
@@ -308,11 +308,11 @@ namespace storm {
             storm::prism::Constant createUndefinedBooleanConstant(std::string const& newConstant) const;
             storm::prism::Constant createUndefinedIntegerConstant(std::string const& newConstant) const;
             storm::prism::Constant createUndefinedDoubleConstant(std::string const& newConstant) const;
-            storm::prism::Constant createUndefinedNonlinearDistributionConstant(std::string const& newConstant) const;
+            storm::prism::Constant createUndefinedEventDistributionConstant(std::string const& newConstant) const;
             storm::prism::Constant createDefinedBooleanConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
             storm::prism::Constant createDefinedIntegerConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
             storm::prism::Constant createDefinedDoubleConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
-            storm::prism::Constant createDefinedNonlinearDistributionConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
+            storm::prism::Constant createDefinedEventDistributionConstant(std::string const& newConstant, storm::expressions::Expression expression) const;
             storm::prism::Formula createFormula(std::string const& formulaName, storm::expressions::Expression expression);
             storm::prism::Label createLabel(std::string const& labelName, storm::expressions::Expression expression) const;
             storm::prism::EventVariable createEventVariable(std::string const& eventName, storm::expressions::Expression expression) const;

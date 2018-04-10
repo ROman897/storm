@@ -124,8 +124,8 @@ namespace storm {
              * @param value The value of the rational literal.
              * @return The resulting expression.
              */
-            // Expression NonlinearDistribution(NonlinearDistributionTypes type, Expression const& exp1, Expression const& exp2) const;
-            // Expression NonlinearDistribution(NonlinearDistributionTypes type, Expression const& exp1) const;
+            // Expression EventDistribution(EventDistributionTypes type, Expression const& exp1, Expression const& exp2) const;
+            // Expression EventDistribution(EventDistributionTypes type, Expression const& exp1) const;
             
             /*!
              * Compares the two expression managers for equality, which holds iff they are the very same object.
@@ -167,7 +167,7 @@ namespace storm {
              *
              * @return The distribution type.
              */
-            Type const& getNonlinearDistributionType() const;
+            Type const& getEventDistributionType() const;
 
             /*!
              * Retrieves the event type.
@@ -247,7 +247,7 @@ namespace storm {
              * @param auxiliary A flag indicating whether the new variable should be tagged as an auxiliary variable.
              * @return The newly declared variable.
              */
-            Variable declareNonlinearDistributionVariable(std::string const& name, bool auxiliary = false);
+            Variable declareEventDistributionVariable(std::string const& name, bool auxiliary = false);
             //end code
 
             Variable declareEventVariable(std::string const& name, bool auxiliary = false);
@@ -336,7 +336,7 @@ namespace storm {
              * @param prefix The prefix which should be used.
              * @return The variable.
              */
-            Variable declareFreshNonlinearDistributionVariable(bool auxiliary = false, std::string const& prefix = "_x");
+            Variable declareFreshEventDistributionVariable(bool auxiliary = false, std::string const& prefix = "_x");
 
             Variable declareFreshEventVariable(bool auxiliary = false, std::string const& prefix = "_x");
             
@@ -383,7 +383,7 @@ namespace storm {
              *
              * @return The number of nonlinear distribution variables.
              */
-            uint_fast64_t getNumberOfNonlinearDistributionVariables() const;
+            uint_fast64_t getNumberOfEventDistributionVariables() const;
             // end code
             
             /*!
@@ -509,7 +509,7 @@ namespace storm {
             uint_fast64_t numberOfBitVectorVariables;
             uint_fast64_t numberOfRationalVariables;
             // Roman code
-            uint_fast64_t numberOfNonlinearDistributionVariables;
+            uint_fast64_t numberOfEventDistributionVariables;
             uint_fast64_t numberOfEventVariables;
             // end code
             
@@ -522,7 +522,7 @@ namespace storm {
             uint_fast64_t numberOfAuxiliaryBitVectorVariables;
             uint_fast64_t numberOfAuxiliaryRationalVariables;
             // Roman code
-            uint_fast64_t numberOfAuxiliaryNonlinearDistributionVariables;
+            uint_fast64_t numberOfAuxiliaryEventDistributionVariables;
             uint_fast64_t numberofAuxiliaryEventVariables;
             // end code
             

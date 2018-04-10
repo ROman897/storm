@@ -1,27 +1,27 @@
-#ifndef STORM_STORAGE_EXPRESSIONS_NonlinearDistributionExpression_H_
-#define STORM_STORAGE_EXPRESSIONS_NonlinearDistributionExpression_H_
+#ifndef STORM_STORAGE_EXPRESSIONS_EventDistributionExpression_H_
+#define STORM_STORAGE_EXPRESSIONS_EventDistributionExpression_H_
 
 #include "storm/storage/expressions/BaseExpression.h"
-#include "storm/storage/expressions/NonlinearDistributionTypes.h"
+#include "storm/storage/expressions/EventDistributionTypes.h"
 
 namespace storm {
     namespace expressions {
 
         struct DistributionLiteral_d{
-            NonlinearDistributionTypes type;
+            EventDistributionTypes type;
             double param1;
             double param2;
         };
 
         struct DistributionLiteral_r{
-            NonlinearDistributionTypes type;
+            EventDistributionTypes type;
             storm::RationalNumber param1;
             storm::RationalNumber param2;
         };
 
-        class NonlinearDistributionExpression : public BaseExpression {
+        class EventDistributionExpression : public BaseExpression {
         public:
-            static const std::map<NonlinearDistributionTypes, std::string> distributionTypeToString;
+            static const std::map<EventDistributionTypes, std::string> distributionTypeToString;
             /*!
              * Creates nonlinear distribution expression with the given expressions as parameters.
              *
@@ -30,7 +30,7 @@ namespace storm {
              * @param type param1 first parameter descibing the distribution
              * @param type param2 second parameter descibing the distribution
              */
-            NonlinearDistributionExpression(ExpressionManager const& manager, NonlinearDistributionTypes type, std::shared_ptr<BaseExpression const> const& param1, std::shared_ptr<BaseExpression const> const& param2);
+            EventDistributionExpression(ExpressionManager const& manager, EventDistributionTypes type, std::shared_ptr<BaseExpression const> const& param1, std::shared_ptr<BaseExpression const> const& param2);
 
             /*!
              * Creates nonlinear distribution expression with the given expression a parameter.
@@ -39,7 +39,7 @@ namespace storm {
              * @param type type of the distribution e.g exponential
              * @param type param1 first parameter descibing the distribution
              */
-            NonlinearDistributionExpression(ExpressionManager const& manager, NonlinearDistributionTypes type, std::shared_ptr<BaseExpression const> const& param1);
+            EventDistributionExpression(ExpressionManager const& manager, EventDistributionTypes type, std::shared_ptr<BaseExpression const> const& param1);
 
 
             /*!
@@ -48,15 +48,15 @@ namespace storm {
              * @param manager The manager responsible for this expression.
              * @param type representation of the value of the literal.
              */
-            // NonlinearDistributionExpression(ExpressionManager const& manager, std::string const& valueAsString);
+            // EventDistributionExpression(ExpressionManager const& manager, std::string const& valueAsString);
 
             // Instantiate constructors and assignments with their default implementations.
-            NonlinearDistributionExpression(NonlinearDistributionExpression const& other) = default;
-            NonlinearDistributionExpression& operator=(NonlinearDistributionExpression const& other) = delete;
-            NonlinearDistributionExpression(NonlinearDistributionExpression&&) = default;
-            NonlinearDistributionExpression& operator=(NonlinearDistributionExpression&&) = delete;
+            EventDistributionExpression(EventDistributionExpression const& other) = default;
+            EventDistributionExpression& operator=(EventDistributionExpression const& other) = delete;
+            EventDistributionExpression(EventDistributionExpression&&) = default;
+            EventDistributionExpression& operator=(EventDistributionExpression&&) = delete;
 
-            virtual ~NonlinearDistributionExpression() = default;
+            virtual ~EventDistributionExpression() = default;
             
             // Override base class methods.
             // virtual DistributionLiteral_d evaluateAsDistribution_d(Valuation const* valuation = nullptr) const override;
@@ -72,7 +72,7 @@ namespace storm {
         
             std::shared_ptr<BaseExpression const> getParam2() const;
 
-            NonlinearDistributionTypes getDistributionType() const override;
+            EventDistributionTypes getDistributionType() const override;
 
             /*!
              * Retrieves the value of the double literal.
@@ -93,7 +93,7 @@ namespace storm {
             virtual void printToStream(std::ostream& stream) const override;
             
         private:
-            NonlinearDistributionTypes distributionType;
+            EventDistributionTypes distributionType;
             // The first parameter describing the distribution
             std::shared_ptr<BaseExpression const> param1;
 
@@ -105,4 +105,4 @@ namespace storm {
     }
 }
 
-#endif /* STORM_STORAGE_EXPRESSIONS_NonlinearDistributionExpression_H_ */
+#endif /* STORM_STORAGE_EXPRESSIONS_EventDistributionExpression_H_ */

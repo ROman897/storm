@@ -66,7 +66,7 @@ namespace storm {
             return true;
         }
 
-        bool NonlinearDistributionType::isEventDistributionType() const {
+        bool EventDistributionType::isEventDistributionType() const {
             return true;
         }
 
@@ -118,15 +118,15 @@ namespace storm {
             return "rational";
         }
 
-        uint64_t NonlinearDistributionType::getMask() const {
-            return NonlinearDistributionType::mask;
+        uint64_t EventDistributionType::getMask() const {
+            return EventDistributionType::mask;
         }
 
         uint64_t EventType::getMask() const {
             return EventType::mask;
         }
 
-        std::string NonlinearDistributionType::getStringRepresentation() const {
+        std::string EventDistributionType::getStringRepresentation() const {
             return "distr";
         }
 

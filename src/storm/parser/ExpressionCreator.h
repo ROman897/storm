@@ -5,7 +5,7 @@
 
 #include <boost/optional.hpp>
 #include "storm/adapters/RationalNumberAdapter.h"
-#include "storm/storage/expressions/NonlinearDistributionTypes.h"
+#include "storm/storage/expressions/EventDistributionTypes.h"
 
 namespace storm {
     
@@ -78,7 +78,7 @@ namespace storm {
             storm::expressions::Expression getIdentifierExpression(std::string const& identifier, bool& pass) const;
             
             // Roman code
-            storm::expressions::Expression createDistributionExpression(storm::expressions::NonlinearDistributionTypes type ,storm::expressions::Expression const& e1, boost::optional<storm::expressions::Expression> const& e2, bool& pass) const;
+            storm::expressions::Expression createDistributionExpression(storm::expressions::EventDistributionTypes type ,storm::expressions::Expression const& e1, boost::optional<storm::expressions::Expression> const& e2, bool& pass) const;
 
             
         private:

@@ -137,8 +137,8 @@ namespace storm {
             // mapping from event id -> index of row in the matrix if present 
             std::map<std::string, uint_fast64_t> eventNameToId;
             if (shouldMapEvents) {
-                eventToStatesMapping = std::map<uint_fast64_t, std::vector<uint_fast64_t>>();
-                stateToEventsMapping = std::map<uint_fast64_t, std::vector<uint_fast64_t>>();
+                eventToStatesMapping = std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>();
+                stateToEventsMapping = std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>();
                 eventVariables = std::vector<EventVariableInformation>();
                 generator->mapEvents(eventVariables.get(), eventNameToId);
             }
@@ -258,7 +258,7 @@ namespace storm {
 
                             uint_fast64_t eventId = it->second;
 
-                            eventToStatesMapping.get()[eventId].push_back(currentRow);
+                            eventToStatesMapping.get()[eventId][currentRowGroup] = currentRow;
                             stateToEventsMapping.get()[currentIndex].push_back(eventId);
                         }
                         

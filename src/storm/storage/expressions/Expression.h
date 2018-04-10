@@ -9,7 +9,7 @@
 
 #include "storm/storage/expressions/BaseExpression.h"
 #include "storm/utility/OsDetection.h"
-#include "storm/storage/expressions/NonlinearDistributionTypes.h"
+#include "storm/storage/expressions/EventDistributionTypes.h"
 
 namespace storm {
     namespace expressions {
@@ -59,7 +59,7 @@ namespace storm {
             friend Expression minimum(Expression const& first, Expression const& second);
             friend Expression maximum(Expression const& first, Expression const& second);
             // Roman code
-            friend Expression distribution(NonlinearDistributionTypes type, Expression const& first, boost::optional<Expression> const& second);
+            friend Expression distribution(EventDistributionTypes type, Expression const& first, boost::optional<Expression> const& second);
 
 
             Expression() = default;
@@ -148,7 +148,7 @@ namespace storm {
             storm::RationalNumber evaluateAsRational() const;
 
 
-            NonlinearDistributionTypes getDistributionType() const;
+            EventDistributionTypes getDistributionType() const;
             
             // Roman code
             /*!
@@ -158,7 +158,7 @@ namespace storm {
              * @param valuation The valuation of unknowns under which to evaluate the expression.
              * @return The double value of the expression under the given valuation.
              */
-            // NonlinearDistributionExpression evaluateAsDistribution() const;
+            // EventDistributionExpression evaluateAsDistribution() const;
 
             /*!
              * Simplifies the expression according to some basic rules.
@@ -430,8 +430,8 @@ namespace storm {
         Expression conjunction(std::vector<storm::expressions::Expression> const& expressions);
         Expression sum(std::vector<storm::expressions::Expression> const& expressions);
         Expression apply(std::vector<storm::expressions::Expression> const& expressions, std::function<Expression (Expression const&, Expression const&)> const& function);
-        Expression distribution(NonlinearDistributionTypes type, Expression const& first, boost::optional<Expression> const& second);
-        Expression distribution(NonlinearDistributionTypes type, Expression const& first);
+        Expression distribution(EventDistributionTypes type, Expression const& first, boost::optional<Expression> const& second);
+        Expression distribution(EventDistributionTypes type, Expression const& first);
 
     }
 }

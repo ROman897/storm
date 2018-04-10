@@ -13,7 +13,7 @@ namespace storm {
 
         bool EventVariable::isNonExponential() const {
             return true;
-            // return getDistributionExpression().getDistributionType() != expressions::NonlinearDistributionTypes::Exp;
+            // return getDistributionExpression().getDistributionType() != expressions::EventDistributionTypes::Exp;
         }
 
         EventVariable EventVariable::substitute(std::map<storm::expressions::Variable, storm::expressions::Expression> const& substitution) const {

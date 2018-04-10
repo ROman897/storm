@@ -1517,7 +1517,7 @@ namespace storm {
                             newUpdates.emplace_back(oldUpdate.getGlobalIndex(), oldUpdate.getLikelihoodExpression() / sumExpression, oldUpdate.getAssignments(), oldUpdate.getFilename(), oldUpdate.getLineNumber());
                         }
                         auto variable = manager->declareFreshEventVariable();
-                        auto distrExpression = expressions::distribution(expressions::NonlinearDistributionTypes::Exp, sumExpression);
+                        auto distrExpression = expressions::distribution(expressions::EventDistributionTypes::Exp, sumExpression);
                         newEventVariables.emplace_back(variable, distrExpression);
                         newCommands.emplace_back(command.getGlobalIndex(), false, command.getActionIndex(), command.getActionName(), variable.getName(), command.getGuardExpression(), newUpdates, command.getFilename(), command.getLineNumber());
                     }

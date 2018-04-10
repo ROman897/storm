@@ -53,6 +53,28 @@ namespace storm {
                     rewardModel.second.reduceToStateBasedRewards(this->getTransitionMatrix(), true);
                 }
             }
+
+            template<typename ValueType, typename RewardModelType>
+            bool Gsmp<ValueType, RewardModelType>::hasEvent(std::string const& event) {
+                return eventNameToId.find(event) != eventNameToId.end();
+            }
+
+
+            template<typename ValueType, typename RewardModelType>
+            storm::storage::SparseMatrix<ValueType> Gsmp<ValueType, RewardModelType>::getTransitionMatrixForEvent(std::string const& eventName) const {
+                auto id = eventNameToId.at(eventName);
+                auto const& transitionMatrix = this->getTransitionMatrix();
+                storm::storage::SparseMatrixBuilder<ValueType> matrixBuilder;
+
+                auto activeStates = eventToStatesMapping.at(id);
+                for (auto const& groupRowIdPair : activeStates) {
+                    auto const& row = transitionMatrix.getRow(groupRowIdPair.second);
+                    for (auto const& entry : row) {
+                        matrixBuilder.addNextValue(groupRowIdPair.first, entry.getColumn(), entry.getValue());
+                    }
+                }
+                return matrixBuilder.build();
+            }
             
             template class Gsmp<double>;
 

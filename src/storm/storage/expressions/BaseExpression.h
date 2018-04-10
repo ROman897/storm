@@ -10,7 +10,7 @@
 #include "storm/adapters/RationalNumberAdapter.h"
 #include "storm/storage/expressions/Type.h"
 #include "storm/utility/OsDetection.h"
-#include "storm/storage/expressions/NonlinearDistributionTypes.h"
+#include "storm/storage/expressions/EventDistributionTypes.h"
 #include <boost/any.hpp>
 
 namespace storm {
@@ -33,7 +33,7 @@ namespace storm {
         class UnaryBooleanFunctionExpression;
         class UnaryNumericalFunctionExpression;
         class VariableExpression;
-        class NonlinearDistributionExpression;
+        class EventDistributionExpression;
         
         /*!
          * The base class of all expression classes.
@@ -100,7 +100,7 @@ namespace storm {
              */
             virtual storm::RationalNumber evaluateAsRational() const;
 
-            // virtual storm::NonlinearDistributionLiteralExpression evaluateAsDistribution() const;
+            // virtual storm::EventDistributionLiteralExpression evaluateAsDistribution() const;
 
             /*!
              * Returns the arity of the expression.
@@ -232,7 +232,7 @@ namespace storm {
             bool hasRationalType() const;
 
             bool hasEventDistributionType() const;
-            virtual NonlinearDistributionTypes getDistributionType() const;
+            virtual EventDistributionTypes getDistributionType() const;
             
             /*!
              * Retrieves a shared pointer to this expression.

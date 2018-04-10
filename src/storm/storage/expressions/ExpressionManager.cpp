@@ -81,15 +81,15 @@ namespace storm {
         }
 
         // Roman code
-        /*Expression ExpressionManager::NonlinearDistribution(NonlinearDistributionTypes type, Expression const& exp1, Expression const& exp2) const{
+        /*Expression ExpressionManager::EventDistribution(EventDistributionTypes type, Expression const& exp1, Expression const& exp2) const{
             // TODO(Roman): not sure if this will be properly used
             // TODO FIX this does not work as it is
-            return Expression(std::make_shared<NonlinearDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1)), std::shared_ptr<BaseType>( new Expression(exp2))));
+            return Expression(std::make_shared<EventDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1)), std::shared_ptr<BaseType>( new Expression(exp2))));
         }*/
 
-        /*Expression ExpressionManager::NonlinearDistribution(NonlinearDistributionTypes type, storm::RationalNumber const& param1) const{
+        /*Expression ExpressionManager::EventDistribution(EventDistributionTypes type, storm::RationalNumber const& param1) const{
             // TODO(Roman): not sure if this will be properly used
-            return Expression(std::make_shared<NonlinearDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1))));
+            return Expression(std::make_shared<EventDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1))));
         }*/
         // end code
 
@@ -128,9 +128,9 @@ namespace storm {
             return rationalType.get();
         }
 
-        Type const& ExpressionManager::getNonlinearDistributionType() const {
+        Type const& ExpressionManager::getEventDistributionType() const {
             if (!nonlinearDistributionType) {
-                nonlinearDistributionType = Type(this->getSharedPointer(), std::shared_ptr<BaseType>(new NonlinearDistributionType()));
+                nonlinearDistributionType = Type(this->getSharedPointer(), std::shared_ptr<BaseType>(new EventDistributionType()));
             }
             return nonlinearDistributionType.get();   
         }
@@ -178,8 +178,8 @@ namespace storm {
             return this->declareVariable(name, this->getRationalType(), auxiliary);
         }
 
-        Variable ExpressionManager::declareNonlinearDistributionVariable(std::string const& name, bool auxiliary){
-            return this->declareVariable(name, this->getNonlinearDistributionType(), auxiliary);
+        Variable ExpressionManager::declareEventDistributionVariable(std::string const& name, bool auxiliary){
+            return this->declareVariable(name, this->getEventDistributionType(), auxiliary);
         }
 
         Variable ExpressionManager::declareEventVariable(std::string const& name, bool auxiliary) {
@@ -208,7 +208,7 @@ namespace storm {
                         offset = numberOfRationalVariables++;
                         // Roman modification
                     } else if (variableType.isEventDistributionType()) {
-                        offset = numberOfNonlinearDistributionVariables++;
+                        offset = numberOfEventDistributionVariables++;
                     } else if (variableType.isEventType()) {
                         offset = numberOfEventVariables++;
                     }
@@ -223,7 +223,7 @@ namespace storm {
                         offset = numberOfRationalVariables++;
                         // Roman modification
                     } else if (variableType.isEventDistributionType()) {
-                        offset = numberOfNonlinearDistributionVariables++;
+                        offset = numberOfEventDistributionVariables++;
                     } else if (variableType.isEventType()) {
                         offset = numberOfEventVariables++;
                     }
@@ -277,8 +277,8 @@ namespace storm {
             return declareFreshVariable(this->getRationalType(), auxiliary, prefix);
         }
         // Roman code
-        Variable ExpressionManager::declareFreshNonlinearDistributionVariable(bool auxiliary, const std::string& prefix) {
-            return declareFreshVariable(this->getNonlinearDistributionType(), auxiliary, prefix);
+        Variable ExpressionManager::declareFreshEventDistributionVariable(bool auxiliary, const std::string& prefix) {
+            return declareFreshVariable(this->getEventDistributionType(), auxiliary, prefix);
         }
 
         Variable ExpressionManager::declareFreshEventVariable(bool auxiliary, std::string const& prefix) {
@@ -297,14 +297,14 @@ namespace storm {
                 return numberOfRationalVariables;
                 // Roman modification
             } else if (variableType.isEventDistributionType()){
-                return numberOfNonlinearDistributionVariables;
+                return numberOfEventDistributionVariables;
             }
             return 0;
         }
         
         uint_fast64_t ExpressionManager::getNumberOfVariables() const {
             return numberOfBooleanVariables + numberOfIntegerVariables + numberOfBitVectorVariables + 
-            numberOfRationalVariables + numberOfNonlinearDistributionVariables;
+            numberOfRationalVariables + numberOfEventDistributionVariables;
         }
         
         uint_fast64_t ExpressionManager::getNumberOfBooleanVariables() const {
@@ -324,8 +324,8 @@ namespace storm {
         }
 
         // Roman code
-        uint_fast64_t ExpressionManager::getNumberOfNonlinearDistributionVariables() const{
-            return numberOfNonlinearDistributionVariables;
+        uint_fast64_t ExpressionManager::getNumberOfEventDistributionVariables() const{
+            return numberOfEventDistributionVariables;
         }
 
         
