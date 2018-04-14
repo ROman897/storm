@@ -35,10 +35,11 @@ namespace storm {
                                 boost::optional<storm::storage::SparseMatrix<storm::storage::sparse::state_type>> const& player1Matrix = boost::none,
                                 boost::optional<std::vector<generator::EventVariableInformation>> const& eventVariables = boost::none,
                                 boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> const& eventToStatesMapping = boost::none,
-                                boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> const& stateToEventsMapping = boost::none)
+                                boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> const& stateToEventsMapping = boost::none,
+                                boost::optional<std::unordered_map<std::string, uint_fast64_t>> const& eventNameToId = boost::none)
                         : transitionMatrix(transitionMatrix), stateLabeling(stateLabeling), rewardModels(rewardModels), rateTransitions(rateTransitions), 
                                 markovianStates(markovianStates), player1Matrix(player1Matrix), eventVariables(eventVariables), 
-                                eventToStatesMapping(eventToStatesMapping), stateToEventsMapping(stateToEventsMapping) {
+                                eventToStatesMapping(eventToStatesMapping), stateToEventsMapping(stateToEventsMapping), eventNameToId(eventNameToId) {
                     // Intentionally left empty
                 }
               
@@ -50,14 +51,16 @@ namespace storm {
                                 boost::optional<storm::storage::SparseMatrix<storm::storage::sparse::state_type>>&& player1Matrix = boost::none,
                                 boost::optional<std::vector<generator::EventVariableInformation>> && eventVariables = boost::none,
                                 boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> && eventToStatesMapping = boost::none,
-                                boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> && stateToEventsMapping = boost::none)
+                                boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> && stateToEventsMapping = boost::none,
+                                boost::optional<std::unordered_map<std::string, uint_fast64_t>> && eventNameToId = boost::none)
                         : transitionMatrix(std::move(transitionMatrix)), stateLabeling(std::move(stateLabeling)), 
                                 rewardModels(std::move(rewardModels)), rateTransitions(rateTransitions), 
                                 markovianStates(std::move(markovianStates)),
-                                player1Matrix(std::move(player1Matrix)), 
-                                eventVariables(std::move(eventVariables)), 
+                                player1Matrix(std::move(player1Matrix)),
+                                eventVariables(std::move(eventVariables)),
                                 eventToStatesMapping(std::move(eventToStatesMapping)),
-                                stateToEventsMapping(std::move(stateToEventsMapping)) {
+                                stateToEventsMapping(std::move(stateToEventsMapping)),
+                                eventNameToId(std::move(eventNameToId)) {
                     // Intentionally left empty
                 }
 
@@ -85,6 +88,8 @@ namespace storm {
                 boost::optional<std::vector<generator::EventVariableInformation>> eventVariables;
                 boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> eventToStatesMapping;
                 boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> stateToEventsMapping;
+                boost::optional<std::unordered_map<std::string, uint_fast64_t>> eventNameToId;
+
 
                 // True iff the transition values (for Markovian choices) are interpreted as rates.
                 bool rateTransitions;

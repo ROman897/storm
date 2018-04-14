@@ -27,14 +27,14 @@ namespace storm {
             
             template <typename ValueType, typename RewardModelType>
             Gsmp<ValueType, RewardModelType>::Gsmp(storm::storage::sparse::ModelComponents<ValueType, RewardModelType> const& components)
-                    : DeterministicModel<ValueType, RewardModelType>(storm::models::ModelType::Gsmp, components), eventVariables(components.eventVariables.get()), eventToStatesMapping(components.eventToStatesMapping.get()), stateToEventsMapping(components.stateToEventsMapping.get()) {
+                    : DeterministicModel<ValueType, RewardModelType>(storm::models::ModelType::Gsmp, components), eventVariables(components.eventVariables.get()), eventToStatesMapping(components.eventToStatesMapping.get()), stateToEventsMapping(components.stateToEventsMapping.get()), eventNameToId(components.eventNameToId.get()) {
                 STORM_LOG_WARN("built gsmp from conponents lval");
                 // Intentionally left empty
             }
             
-           template <typename ValueType, typename RewardModelType>
+            template <typename ValueType, typename RewardModelType>
             Gsmp<ValueType, RewardModelType>::Gsmp(storm::storage::sparse::ModelComponents<ValueType, RewardModelType>&& components)
-                    : DeterministicModel<ValueType, RewardModelType>(storm::models::ModelType::Gsmp, std::move(components)), eventVariables(std::move(components.eventVariables.get())), eventToStatesMapping(std::move(components.eventToStatesMapping.get())), stateToEventsMapping(std::move(components.stateToEventsMapping.get())) {
+                    : DeterministicModel<ValueType, RewardModelType>(storm::models::ModelType::Gsmp, std::move(components)), eventVariables(std::move(components.eventVariables.get())), eventToStatesMapping(std::move(components.eventToStatesMapping.get())), stateToEventsMapping(std::move(components.stateToEventsMapping.get())), eventNameToId(std::move(components.eventNameToId.get())) {
                 STORM_LOG_WARN("built gsmp from components rval");
                 for (auto const& tt : eventToStatesMapping) {
 
@@ -43,6 +43,11 @@ namespace storm {
                         STORM_LOG_WARN("active at row: " << s);
                     }
                     STORM_LOG_WARN("-----------------------------------------------------------");
+                }
+                for (auto const& tt : eventNameToId) {
+                    STORM_LOG_WARN("event name: " << tt.first << "---------->" << tt.second << std::endl);
+                    STORM_LOG_WARN(getTransitionMatrixForEvent(tt.first) << std::endl);
+                    STORM_LOG_WARN("----------------------------------------" << std::endl);
                 }
                 // Intentionally left empty
             }

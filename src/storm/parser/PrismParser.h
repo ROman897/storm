@@ -131,10 +131,11 @@ namespace storm {
                     ("gsmp", 21)
                     ("distribution", 22)
                     ("event", 23)
-                    ("exp", 24)
+                    ("exponential", 24)
                     ("weibull", 25)
                     ("uniform", 26)
-                    ("dirac", 27);
+                    ("dirac", 27)
+                    ("erlang", 28);
                     // end mod
                 }
             };

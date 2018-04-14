@@ -1036,7 +1036,7 @@ namespace storm {
 
                 // Roman Code
                 for (auto const& variable : module.getEventVariables()) {
-                    std::set<storm::expressions::Variable> containedVariables = variable.getDistributionExpression().getVariables(); 
+                    std::set<storm::expressions::Variable> containedVariables = variable.getDistributionExpression().getVariables();
                     std::set<storm::expressions::Variable> illegalVariables;
                     std::set_difference(containedVariables.begin(), containedVariables.end(), constants.begin(), constants.end(), std::inserter(illegalVariables, illegalVariables.begin()));
                     bool isValid = illegalVariables.empty();

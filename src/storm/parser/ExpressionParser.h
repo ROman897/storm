@@ -204,9 +204,10 @@ namespace storm {
             struct distributionOperatorStruct : qi::symbols<char, storm::expressions::EventDistributionTypes> {
                 distributionOperatorStruct() {
                     add
-                    ("exp", storm::expressions::EventDistributionTypes::Exp)
+                    ("exponential", storm::expressions::EventDistributionTypes::Exp)
                     ("weibull", storm::expressions::EventDistributionTypes::Weibull)
                     ("uniform", storm::expressions::EventDistributionTypes::Uniform)
+                    ("erlang", storm::expressions::EventDistributionTypes::Erlang)
                     ("dirac", storm::expressions::EventDistributionTypes::Dirac);
                 }
             };

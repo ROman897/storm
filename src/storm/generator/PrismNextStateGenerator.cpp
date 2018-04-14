@@ -483,10 +483,8 @@ namespace storm {
                     result.push_back(Choice<ValueType>(command.getActionIndex(), command.isMarkovian()));
                     Choice<ValueType>& choice = result.back();
                     if (command.hasEvent()) {
-                        // this way we can differentiate between events with same name that 
-                        // belong to different modules
                         // STORM_LOG_WARN("setting event: " << command.getEventName() << std::endl);
-                        choice.setEvent("__" + module.getName() + command.getEventName());
+                        choice.setEvent(command.getEventName());
                     }
                     
                     // Remember the choice origin only if we were asked to.
@@ -567,7 +565,7 @@ namespace storm {
                             storm::prism::Command const& command = *iteratorList[i];
                             if (command.isMaster()) {
                                 STORM_LOG_THROW(!static_cast<bool>(eventName), storm::exceptions::WrongFormatException, "combination of commands for given label contains more than one master");
-                                eventName = "__" + program.getModule(i).getName() + command.getEventName();
+                                eventName = command.getEventName();
                             }
                             for (uint_fast64_t j = 0; j < command.getNumberOfUpdates(); ++j) {
                                 storm::prism::Update const& update = command.getUpdate(j);
@@ -741,12 +739,13 @@ namespace storm {
         }
 
         template<typename ValueType, typename StateType>
-        void PrismNextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation>& eventVariables, std::map<std::string, uint_fast64_t>& eventNameToId) const {
+        void PrismNextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNameToId) const {
+            uint_fast64_t index = 0;
             for (auto const& module : program.getModules()) {
-                for (uint_fast64_t i = 0; i < module.getEventVariables().size(); ++i) {
-                    auto const& event = module.getEventVariables()[i];
+                for (auto const& event : module.getEventVariables()) {
                     eventVariables.push_back(EventVariableInformation());
-                    eventNameToId["__" + module.getName() + event.getName()] = i;
+                    eventNameToId[event.getName()] = index;
+                    ++index;
                 }
             }
         }

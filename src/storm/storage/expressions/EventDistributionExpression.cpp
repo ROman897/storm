@@ -10,8 +10,9 @@ namespace storm {
     namespace expressions {
 
             const std::map<EventDistributionTypes, std::string> EventDistributionExpression::distributionTypeToString =
-                {{EventDistributionTypes::Exp, "Exp"}, {EventDistributionTypes::Weibull, "Weibull"},
-                {EventDistributionTypes::Uniform, "Uniform"}, {EventDistributionTypes::Dirac, "Dirac"}};     
+                {{EventDistributionTypes::Exp, "Exponentian"}, {EventDistributionTypes::Weibull, "Weibull"},
+                {EventDistributionTypes::Uniform, "Uniform"}, {EventDistributionTypes::Dirac, "Dirac"},
+                {EventDistributionTypes::Erlang, "Erlang"}};     
 
             EventDistributionExpression::EventDistributionExpression(ExpressionManager const& manager, EventDistributionTypes type, std::shared_ptr<BaseExpression const> const& param1, std::shared_ptr<BaseExpression const> const& param2) : 
                 BaseExpression(manager, manager.getEventDistributionType()), distributionType(type), param1(param1), param2(param2){

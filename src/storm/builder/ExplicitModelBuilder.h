@@ -145,6 +145,8 @@ namespace storm {
             boost::optional<std::vector<EventVariableInformation>> eventVariables;
             boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> eventToStatesMapping;
             boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> stateToEventsMapping;
+            boost::optional<std::unordered_map<std::string, uint_fast64_t>> eventNameToId;
+
 
         };
         

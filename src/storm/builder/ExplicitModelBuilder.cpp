@@ -135,12 +135,12 @@ namespace storm {
 
             bool shouldMapEvents = generator->getModelType() == storm::generator::ModelType::GSMP;
             // mapping from event id -> index of row in the matrix if present 
-            std::map<std::string, uint_fast64_t> eventNameToId;
             if (shouldMapEvents) {
                 eventToStatesMapping = std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>();
                 stateToEventsMapping = std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>();
+                eventNameToId = std::unordered_map<std::string, uint_fast64_t>();
                 eventVariables = std::vector<EventVariableInformation>();
-                generator->mapEvents(eventVariables.get(), eventNameToId);
+                generator->mapEvents(eventVariables.get(), eventNameToId.get());
             }
 
             auto timeOfStart = std::chrono::high_resolution_clock::now();
@@ -248,13 +248,8 @@ namespace storm {
                         if (shouldMapEvents && choice.hasEvent()) {
                             std::string const& eventName = choice.getEventName();
                             // STORM_LOG_WARN("found event: " << eventName << std::endl);
-                            auto it = eventNameToId.find(eventName);
-                            if (it == eventNameToId.end()) {
-                                STORM_LOG_WARN("not found event name: " << eventName << std::endl);
-                            } else {
-                                STORM_LOG_WARN("found event name: " << eventName << std::endl);
-                            }
-                            STORM_LOG_THROW(it != eventNameToId.end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
+                            auto it = eventNameToId.get().find(eventName);
+                            STORM_LOG_THROW(it != eventNameToId.get().end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
 
                             uint_fast64_t eventId = it->second;
 
@@ -343,7 +338,9 @@ namespace storm {
             storm::storage::sparse::ModelComponents<ValueType, RewardModelType> modelComponents(transitionMatrixBuilder.build(), buildStateLabeling(), std::unordered_map<std::string, RewardModelType>(), !generator->isDiscreteTimeModel(), std::move(markovianStates));
             modelComponents.eventVariables = std::move(eventVariables);
             modelComponents.eventToStatesMapping = std::move(eventToStatesMapping);
-            modelComponents.stateToEventsMapping = std::move(stateToEventsMapping); 
+            modelComponents.stateToEventsMapping = std::move(stateToEventsMapping);
+            modelComponents.eventNameToId = std::move(eventNameToId);
+
             // Now finalize all reward models.
             for (auto& rewardModelBuilder : rewardModelBuilders) {
                 modelComponents.rewardModels.emplace(rewardModelBuilder.getName(), rewardModelBuilder.build(modelComponents.transitionMatrix.getRowCount(), modelComponents.transitionMatrix.getColumnCount(), modelComponents.transitionMatrix.getRowGroupCount()));
