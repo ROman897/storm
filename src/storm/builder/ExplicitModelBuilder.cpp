@@ -136,11 +136,11 @@ namespace storm {
             bool shouldMapEvents = generator->getModelType() == storm::generator::ModelType::GSMP;
             // mapping from event id -> index of row in the matrix if present 
             if (shouldMapEvents) {
-                eventToStatesMapping = std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>();
-                stateToEventsMapping = std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>();
-                eventNameToId = std::unordered_map<std::string, uint_fast64_t>();
-                eventVariables = std::vector<EventVariableInformation>();
-                generator->mapEvents(eventVariables.get(), eventNameToId.get());
+                this->eventToStatesMapping = std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>();
+                this->stateToEventsMapping = std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>();
+                this->eventNameToId = std::unordered_map<std::string, uint_fast64_t>();
+                this->eventVariables = std::vector<EventVariableInformation>();
+                this->generator->mapEvents(eventVariables.get(), eventNameToId.get());
             }
 
             auto timeOfStart = std::chrono::high_resolution_clock::now();
@@ -175,6 +175,7 @@ namespace storm {
                         if (behavior.wasExpanded()) {
                             this->stateStorage.deadlockStateIndices.push_back(currentIndex);
                         }
+
                         
                         if (markovianStates) {
                             markovianStates.get().grow(currentRowGroup + 1, false);
@@ -186,6 +187,15 @@ namespace storm {
                         }
                         
                         transitionMatrixBuilder.addNextValue(currentRow, currentIndex, storm::utility::one<ValueType>());
+
+                        if (generator->getModelType() == storm::generator::ModelType::GSMP) {
+                            uint_fast64_t eventId = eventVariables.get().size();
+                            eventVariables.get().push_back(EventVariableInformation());
+                            std::string new_name = "deadlock_event_" + std::to_string(eventId);
+                            eventNameToId.get()[new_name] = eventId;
+                            eventToStatesMapping.get()[eventId][currentRowGroup] = currentRow;
+                            stateToEventsMapping.get()[currentIndex].push_back(eventId);
+                        }
                         
                         for (auto& rewardModelBuilder : rewardModelBuilders) {
                             if (rewardModelBuilder.hasStateRewards()) {
@@ -246,22 +256,47 @@ namespace storm {
                         }
 
                         if (shouldMapEvents && choice.hasEvents()) {
+                            uint_fast64_t eventId;
+                            auto& eventVariables = this->eventVariables.get();
+                            auto& eventNameToId = this->eventNameToId.get();
+                            auto& eventToStatesMapping = this->eventToStatesMapping.get();
+                            auto& stateToEventsMapping = this->stateToEventsMapping.get();
 
                             // if choice has multiple events, we have to create a new event with distribution calculated as product of its current distributions
                             if (choice.hasMultipleEvents()) {
+                                std::string new_name;
+                                bool first = true;
+                                for (std::string const& eventName : choice.getEventNames()) {
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        new_name += " X ";
+                                    }
+                                    new_name += eventName;
+                                }
+                                auto it = eventNameToId.find(new_name);
+                                if (it == eventNameToId.end()) {
+                                    eventId = eventVariables.size();
+                                    eventVariables.push_back(EventVariableInformation());
+                                    eventNameToId[new_name] = eventId; 
+                                } else {
+                                    eventId = it->second;
+                                }
 
+                                for (std::string const& eventName : choice.getEventNames()) {
+                                    STORM_LOG_WARN("found multiple events!!!!: " << eventName << std::endl);
+                                }
                             } else {
 
                                 std::string const& eventName = choice.getEventNames()[0];
-                                // STORM_LOG_WARN("found event: " << eventName << std::endl);
-                                auto it = eventNameToId.get().find(eventName);
-                                STORM_LOG_THROW(it != eventNameToId.get().end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
+                                STORM_LOG_WARN("found event: " << eventName << std::endl);
+                                auto it = eventNameToId.find(eventName);
+                                STORM_LOG_THROW(it != eventNameToId.end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
 
-                                uint_fast64_t eventId = it->second;
-
-                                eventToStatesMapping.get()[eventId][currentRowGroup] = currentRow;
-                                stateToEventsMapping.get()[currentIndex].push_back(eventId);
+                                eventId = it->second;
                             }
+                                eventToStatesMapping[eventId][currentRowGroup] = currentRow;
+                                stateToEventsMapping[currentIndex].push_back(eventId);
                         }
                         
                         // Add the rewards to the reward models.

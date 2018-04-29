@@ -171,7 +171,7 @@ namespace storm {
 
         template <typename ValueType, typename StateType>
         bool Choice<ValueType, StateType>::hasMultipleEvents() const {
-            return static_cast<bool>(eventNames) && eventNames.get().size() >= 1;
+            return static_cast<bool>(eventNames) && eventNames.get().size() > 1;
         }
 
         template<typename ValueType, typename StateType>

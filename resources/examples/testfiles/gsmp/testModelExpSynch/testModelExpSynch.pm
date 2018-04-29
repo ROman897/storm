@@ -14,9 +14,9 @@ const distribution diracDistr = dirac(timeout);
 
 module firstModule
 
-	event firstModEvent = expDistr;
+	event firstModEvent = exponential(defConstant);
 
-	event timeoutEvent = diracDistr;
+	event timeoutEvent = dirac(timeout);
 
 	first : [0..1] init 0;
 

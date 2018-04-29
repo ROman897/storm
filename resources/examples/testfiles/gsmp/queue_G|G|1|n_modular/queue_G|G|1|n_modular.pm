@@ -27,6 +27,6 @@ module Queue
 
 	items: [0..maxItem] init 0;
 
-	[produce] items<maxItem --slave-> (items'=items+1);
-	[served] items>0 --slave-> (items'=items-1);
+	[produce] items=0 --slave-> (items'=items+1);
+	[served] items>=3 --slave-> (items'=items-1);
 endmodule

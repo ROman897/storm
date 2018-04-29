@@ -12,11 +12,12 @@ namespace storm {
         }
 
         bool EventVariable::isNonExponential() const {
-            return true;
-            // return getDistributionExpression().getDistributionType() != expressions::EventDistributionTypes::Exp;
+            // return true;
+            return getDistributionExpression().getDistributionType() != expressions::EventDistributionTypes::Exp;
         }
 
         EventVariable EventVariable::substitute(std::map<storm::expressions::Variable, storm::expressions::Expression> const& substitution) const {
+            STORM_LOG_WARN("substitution event variable!!" << std::endl);
             return EventVariable(this->getExpressionVariable(), this->getDistributionExpression().substitute(substitution), this->getFilename(), this->getLineNumber());
         }
 

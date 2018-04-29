@@ -1037,6 +1037,9 @@ namespace storm {
                 // Roman Code
                 for (auto const& variable : module.getEventVariables()) {
                     std::set<storm::expressions::Variable> containedVariables = variable.getDistributionExpression().getVariables();
+                    for (auto const& a : containedVariables) {
+                        STORM_LOG_WARN(a.getName());
+                    }
                     std::set<storm::expressions::Variable> illegalVariables;
                     std::set_difference(containedVariables.begin(), containedVariables.end(), constants.begin(), constants.end(), std::inserter(illegalVariables, illegalVariables.begin()));
                     bool isValid = illegalVariables.empty();
@@ -1045,7 +1048,7 @@ namespace storm {
                         for (auto const& var : illegalVariables) {
                             illegalVariableNames.push_back(var.getName());
                         }
-                        STORM_LOG_THROW(isValid, storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << ": distribution expression referes to unknown constants: " << boost::algorithm::join(illegalVariableNames, ",") << ".");
+                        //STORM_LOG_THROW(isValid, storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << "event: " << variable.getName() << ", distribution expression referes to unknown constants: " << boost::algorithm::join(illegalVariableNames, ",") << ".");
                     }
                     STORM_LOG_THROW(variable.getDistributionExpression().hasDistributionType(), storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << ": distribution expression must evaluate to type 'distribution'.");
 
@@ -1279,7 +1282,7 @@ namespace storm {
                             if (wasNonExp) {
                                 STORM_LOG_THROW(masterCount <= 1, storm::exceptions::WrongFormatException, "GSMP error, found more than one master non-exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ".");
                             } else {
-                                STORM_LOG_THROW(masterCount <= 1 || expSyncBackwardCompatible, storm::exceptions::WrongFormatException, "GSMP error, found more than one master exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ". If this was intentional, enable ExpSyncBackwardCompatible flag");
+                                STORM_LOG_THROW(masterCount <= 1 || storm::settings::getModule<storm::settings::modules::IOSettings>().isExpSyncBackwardCompatibleSet(), storm::exceptions::WrongFormatException, "GSMP error, found more than one master exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ". If this was intentional, enable ExpSyncBackwardCompatible flag");
                             }
                         }
                     }

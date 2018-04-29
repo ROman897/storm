@@ -286,7 +286,6 @@ namespace storm {
             if (this->getModelType() == ModelType::GSMP && totalNumberOfChoices > 1) {
                 // iterate over all choices and fuse together choices with same event
                 auto runner = allChoices.begin();
-                STORM_LOG_WARN("fusing gsmp choices into one: " << allChoices.size() << std::endl);
                 std::vector<Choice<ValueType>> currentEventChoices;
                 uint_fast64_t lastAction;
                 std::vector<Choice<ValueType>> allEventChoices;
@@ -326,7 +325,6 @@ namespace storm {
                             for (auto& aggrChoice : aggregatedChoices) {
                                 Choice<ValueType> eventChoice;
                                 eventChoice.setEvents(aggrChoice.first);
-
                                 for (auto const& choice : aggrChoice.second) {
                                     for (auto const& stateProbabilityPair : choice) {
                                         eventChoice.addProbability(stateProbabilityPair.first, stateProbabilityPair.second / aggregatedChoices.size());
@@ -375,14 +373,15 @@ namespace storm {
                 }
                 allChoices = std::move(allEventChoices);
             }
-            
+
+
+
             // Move all remaining choices in place.
             for (auto& choice : allChoices) {
                 result.addChoice(std::move(choice));
             }
 
             this->postprocess(result);
-            
             return result;
         }
         
@@ -575,17 +574,13 @@ namespace storm {
                         boost::optional<std::vector<std::string>> eventNames;
                         for (uint_fast64_t i = 0; i < iteratorList.size(); ++i) {
                             storm::prism::Command const& command = *iteratorList[i];
+                            // at this point, it is expected that all necessary checks to validate
+                            // whether there are multiple non-exponential events have been performed
                             if (command.isMaster()) {
-
-                                if (command.hasNonExponentialEvent()) {
-                                    STORM_LOG_THROW(!static_cast<bool>(eventNames), storm::exceptions::WrongFormatException, "combination of commands for given label contains more than one nonexponential event");
+                                if (!static_cast<bool>(eventNames)) {
                                     eventNames = {command.getEventName()};
                                 } else {
-                                    if (!static_cast<bool>(eventNames)) {
-                                        eventNames = {command.getEventName()};
-                                    } else {
-                                        eventNames.get().push_back(command.getEventName());
-                                    }
+                                    eventNames.get().push_back(command.getEventName());
                                 }
                             }
 

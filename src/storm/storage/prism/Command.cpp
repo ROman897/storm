@@ -76,10 +76,6 @@ namespace storm {
             return evented && !slave;
         }
 
-        bool Command::hasNonExponentialEvent() const {
-            return false;
-        }
-        
         bool Command::containsVariablesOnlyInUpdateProbabilities(std::set<storm::expressions::Variable> const& undefinedConstantVariables) const {
             if (this->getGuardExpression().containsVariable(undefinedConstantVariables)) {
                 return false;
