@@ -120,6 +120,8 @@ namespace storm {
             bool hasEvent() const;
             bool isSlave() const;
             bool isMaster() const;
+
+            bool hasNonExponentialEvent() const;
             
             /*!
              * Checks whether the given set of variables only appears in the update probabilities of the command.

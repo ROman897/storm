@@ -49,6 +49,7 @@ namespace storm {
             const std::string IOSettings::janiPropertyOptionShortName = "jprop";
             const std::string IOSettings::propertyOptionName = "prop";
             const std::string IOSettings::propertyOptionShortName = "prop";
+            const std::string IOSettings::expSyncBackwardCompatibleName = "expSyncBackwardCompatible";
 
             
             IOSettings::IOSettings() : ModuleSettings(moduleName) {
@@ -97,6 +98,7 @@ namespace storm {
                                 .addArgument(storm::settings::ArgumentBuilder::createStringArgument("values", "A comma separated list of constants and their value, e.g. a=1,b=2,c=3.").setDefaultValueString("").build()).build());
                 this->addOption(storm::settings::OptionBuilder(moduleName, janiPropertyOptionName, false, "Specifies the properties from the jani model (given by --" + janiInputOptionName + ")  to be checked.").setShortName(janiPropertyOptionShortName)
                                 .addArgument(storm::settings::ArgumentBuilder::createStringArgument("values", "A comma separated list of properties to be checked").setDefaultValueString("").build()).build());
+                this->addOption(storm::settings::OptionBuilder(moduleName, expSyncBackwardCompatibleName, false, "If set, GSMP model will process and fuse together traditional CTMC commands").build());
             }
 
             bool IOSettings::isExportDotSet() const {
@@ -271,6 +273,10 @@ namespace storm {
 
             std::string IOSettings::getPropertyFilter() const {
                 return this->getOption(propertyOptionName).getArgumentByName("filter").getValueAsString();
+            }
+
+            bool IOSettings::isExpSyncBackwardCompatibleSet() const {
+                return this->getOption(expSyncBackwardCompatibleName).getHasOptionBeenSet();
             }
 
 			void IOSettings::finalize() {

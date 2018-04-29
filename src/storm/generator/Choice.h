@@ -150,9 +150,15 @@ namespace storm {
              */
             std::size_t size() const;
 
-            bool hasEvent() const;
+            bool hasEvents() const;
 
-            std::string const& getEventName() const;
+            bool hasMultipleEvents() const;
+
+            std::vector<std::string> const& getEventNames() const;
+
+            void addEvent(std::string const& event);
+
+            void setEvents(std::vector<std::string> const& events);
 
             void setEvent(std::string const& event);
             
@@ -178,7 +184,7 @@ namespace storm {
             // The labels of this choice
             boost::optional<std::set<std::string>> labels;
 
-            boost::optional<std::string> eventName;
+            boost::optional<std::vector<std::string>> eventNames;
         };
 
         template<typename ValueType, typename StateType>

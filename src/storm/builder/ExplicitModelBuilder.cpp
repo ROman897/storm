@@ -245,16 +245,23 @@ namespace storm {
                             transitionMatrixBuilder.addNextValue(currentRow, stateProbabilityPair.first, stateProbabilityPair.second);
                         }
 
-                        if (shouldMapEvents && choice.hasEvent()) {
-                            std::string const& eventName = choice.getEventName();
-                            // STORM_LOG_WARN("found event: " << eventName << std::endl);
-                            auto it = eventNameToId.get().find(eventName);
-                            STORM_LOG_THROW(it != eventNameToId.get().end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
+                        if (shouldMapEvents && choice.hasEvents()) {
 
-                            uint_fast64_t eventId = it->second;
+                            // if choice has multiple events, we have to create a new event with distribution calculated as product of its current distributions
+                            if (choice.hasMultipleEvents()) {
 
-                            eventToStatesMapping.get()[eventId][currentRowGroup] = currentRow;
-                            stateToEventsMapping.get()[currentIndex].push_back(eventId);
+                            } else {
+
+                                std::string const& eventName = choice.getEventNames()[0];
+                                // STORM_LOG_WARN("found event: " << eventName << std::endl);
+                                auto it = eventNameToId.get().find(eventName);
+                                STORM_LOG_THROW(it != eventNameToId.get().end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
+
+                                uint_fast64_t eventId = it->second;
+
+                                eventToStatesMapping.get()[eventId][currentRowGroup] = currentRow;
+                                stateToEventsMapping.get()[currentIndex].push_back(eventId);
+                            }
                         }
                         
                         // Add the rewards to the reward models.

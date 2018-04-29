@@ -165,18 +165,37 @@ namespace storm {
         }
 
         template<typename ValueType, typename StateType>
-        bool Choice<ValueType, StateType>::hasEvent() const {
-            return static_cast<bool>(eventName);
+        bool Choice<ValueType, StateType>::hasEvents() const {
+            return static_cast<bool>(eventNames) && !eventNames.get().empty();
+        }
+
+        template <typename ValueType, typename StateType>
+        bool Choice<ValueType, StateType>::hasMultipleEvents() const {
+            return static_cast<bool>(eventNames) && eventNames.get().size() >= 1;
         }
 
         template<typename ValueType, typename StateType>
-        std::string const& Choice<ValueType, StateType>::getEventName() const {
-            return eventName.get();
+        std::vector<std::string> const& Choice<ValueType, StateType>::getEventNames() const {
+            return eventNames.get();
         }
+
+        template<typename ValueType, typename StateType>
+        void Choice<ValueType, StateType>::addEvent(std::string const& event) {
+            if (!eventNames) {
+                eventNames = {event};
+            } else {
+                eventNames.get().push_back(event);
+            }
+        }
+
+        template<typename ValueType, typename StateType>
+        void Choice<ValueType, StateType>::setEvents(std::vector<std::string> const& events) {
+            eventNames = events;
+         }
 
         template<typename ValueType, typename StateType>
         void Choice<ValueType, StateType>::setEvent(std::string const& event) {
-            eventName = event;
+            eventNames = {event};
         }
         
         template<typename ValueType, typename StateType>

@@ -320,6 +320,8 @@ namespace storm {
                 bool check() const override;
                 void finalize() override;
 
+                bool isExpSyncBackwardCompatibleSet() const;
+
                 // The name of the module.
                 static const std::string moduleName;
 
@@ -357,6 +359,7 @@ namespace storm {
                 static const std::string janiPropertyOptionShortName;
                 static const std::string propertyOptionName;
                 static const std::string propertyOptionShortName;
+                static const std::string expSyncBackwardCompatibleName;
             };
 
         } // namespace modules
