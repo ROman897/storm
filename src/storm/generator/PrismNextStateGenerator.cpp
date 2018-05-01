@@ -760,7 +760,7 @@ namespace storm {
             uint_fast64_t index = 0;
             for (auto const& module : program.getModules()) {
                 for (auto const& event : module.getEventVariables()) {
-                    eventVariables.push_back(EventVariableInformation());
+                    eventVariables.push_back(EventVariableInformation(event.isNonExponential()));
                     eventNamesToId[event.getName()] = index;
                     ++index;
                 }

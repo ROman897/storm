@@ -25,7 +25,7 @@ namespace storm {
             // Intentionally left empty.
         }
 
-        EventVariableInformation::EventVariableInformation() {
+        EventVariableInformation::EventVariableInformation(bool isNonExp) : isNonExponential(isNonExp) {
             
         }
 

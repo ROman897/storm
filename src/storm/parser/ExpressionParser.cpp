@@ -97,7 +97,7 @@ namespace storm {
             plusExpression.name("plus expression");
             bool p;
             // Roman code
-            distributionExpression = (distributionOperatorStruct_ > qi::lit("(") > expression >  -( qi::lit(",") > expression) > qi::lit(")"))[qi::_val = /*phoenix::bind(&ExpressionCreator::createBooleanLiteralExpression, phoenix::ref(*expressionCreator), true, qi::_pass)*/phoenix::bind(&ExpressionCreator::createDistributionExpression, phoenix::ref(*expressionCreator), qi::_1, qi::_2, qi::_3, qi::_pass)]; 
+            distributionExpression = (distributionOperatorStruct_ > qi::lit("(") > expression >  -( qi::lit(",") > expression) > qi::lit(")"))[qi::_val = phoenix::bind(&ExpressionCreator::createDistributionExpression, phoenix::ref(*expressionCreator), qi::_1, qi::_2, qi::_3, qi::_pass)]; 
             distributionExpression.name("distribution expression");
 
             if (allowBacktracking) {

@@ -57,7 +57,9 @@ namespace storm {
 
         // A structure storing information about the event variables of the model.
         struct EventVariableInformation {
-            EventVariableInformation();
+            EventVariableInformation(bool isNonExp);
+
+            bool isNonExponential;
         };
         
         // A structure storing information about the location variables of the model.

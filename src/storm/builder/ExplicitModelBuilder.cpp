@@ -190,7 +190,7 @@ namespace storm {
 
                         if (generator->getModelType() == storm::generator::ModelType::GSMP) {
                             uint_fast64_t eventId = eventVariables.get().size();
-                            eventVariables.get().push_back(EventVariableInformation());
+                            eventVariables.get().push_back(EventVariableInformation(true));
                             std::string new_name = "deadlock_event_" + std::to_string(eventId);
                             eventNameToId.get()[new_name] = eventId;
                             eventToStatesMapping.get()[eventId][currentRowGroup] = currentRow;
@@ -267,6 +267,9 @@ namespace storm {
                                 std::string new_name;
                                 bool first = true;
                                 for (std::string const& eventName : choice.getEventNames()) {
+
+                                    STORM_LOG_THROW(!eventVariables[eventNameToId[eventName]].isNonExponential, storm::exceptions::WrongFormatException, "Invalid GSMP operation, non-exponential event \"" << eventName << "\" fusing with exponential events!");
+
                                     if (first) {
                                         first = false;
                                     } else {
@@ -277,7 +280,7 @@ namespace storm {
                                 auto it = eventNameToId.find(new_name);
                                 if (it == eventNameToId.end()) {
                                     eventId = eventVariables.size();
-                                    eventVariables.push_back(EventVariableInformation());
+                                    eventVariables.push_back(EventVariableInformation(true));
                                     eventNameToId[new_name] = eventId; 
                                 } else {
                                     eventId = it->second;

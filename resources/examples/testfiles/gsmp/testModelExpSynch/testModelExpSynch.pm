@@ -12,11 +12,13 @@ const distribution expDistr = exponential(defConstant);
 
 const distribution diracDistr = dirac(timeout);
 
+const distribution exp2 = exponential(12);
+
 module firstModule
 
-	event firstModEvent = exponential(defConstant);
+	event firstModEvent = expDistr;
 
-	event timeoutEvent = dirac(timeout);
+	event timeoutEvent = diracDistr;
 
 	first : [0..1] init 0;
 
@@ -28,7 +30,7 @@ endmodule
 
 module secondModule
 
-	event secondModEvent = exponential(5);
+	event secondModEvent = exp2;
 
 	second : [0..6] init 0;
 

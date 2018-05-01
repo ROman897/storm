@@ -1165,7 +1165,7 @@ namespace storm {
             }
 
             if (this->getModelType() != Program::ModelType::GSMP && hasEvent) {
-                STORM_LOG_THROW(false, storm::exceptions::WrongFormatException, "The model uses commands with events. Events are only defined for model type GSMP.");
+                STORM_LOG_THROW(false, storm::exceptions::WrongFormatException, "The model uses commands with events. Events are only allowed for model type GSMP.");
             }
             
             if (this->getModelType() != Program::ModelType::GSMP && hasLabeledMarkovianCommand) {
@@ -1257,37 +1257,37 @@ namespace storm {
 
             // Roman code
             // check if there is at most one master event for given action or that exponential events can be grouped together
-            if (modelType == Program::ModelType::GSMP) {
-            // check that there is at most one master event for each label
-                for (auto const& act : this->actionIndicesToModuleIndexMap) {
-                    bool wasNonExp = false;
-                    uint_fast64_t masterCount = 0;
-                    for (auto moduleIndex : act.second) {
-                        auto const& module = modules[moduleIndex];
-                        auto const& commands = module.getCommandIndicesByActionIndex(act.first);
-                        for (auto commandIndex : commands) {
-                            auto const& command = module.getCommand(commandIndex);
-                            if (command.hasEvent() && command.isSlave()) {
-                                continue;
-                            }
+            // if (modelType == Program::ModelType::GSMP) {
+            // // check that there is at most one master event for each label
+            //     for (auto const& act : this->actionIndicesToModuleIndexMap) {
+            //         bool wasNonExp = false;
+            //         uint_fast64_t masterCount = 0;
+            //         for (auto moduleIndex : act.second) {
+            //             auto const& module = modules[moduleIndex];
+            //             auto const& commands = module.getCommandIndicesByActionIndex(act.first);
+            //             for (auto commandIndex : commands) {
+            //                 auto const& command = module.getCommand(commandIndex);
+            //                 if (command.hasEvent() && command.isSlave()) {
+            //                     continue;
+            //                 }
 
-                            // if command has no event, it will be later 
-                            // translated into multiple exponential commands,
-                            // but don't expand command it to multiple commands just yet
-                            if (command.hasEvent() && command.isMaster()) {
-                                auto const& event = module.getEventVariable(command.getEventName());
-                                wasNonExp = wasNonExp || event.isNonExponential();
-                            }
-                            ++masterCount;
-                            if (wasNonExp) {
-                                STORM_LOG_THROW(masterCount <= 1, storm::exceptions::WrongFormatException, "GSMP error, found more than one master non-exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ".");
-                            } else {
-                                STORM_LOG_THROW(masterCount <= 1 || storm::settings::getModule<storm::settings::modules::IOSettings>().isExpSyncBackwardCompatibleSet(), storm::exceptions::WrongFormatException, "GSMP error, found more than one master exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ". If this was intentional, enable ExpSyncBackwardCompatible flag");
-                            }
-                        }
-                    }
-                }
-            }
+            //                 // if command has no event, it will be later 
+            //                 // translated into multiple exponential commands,
+            //                 // but don't expand command it to multiple commands just yet
+            //                 if (command.hasEvent() && command.isMaster()) {
+            //                     auto const& event = module.getEventVariable(command.getEventName());
+            //                     wasNonExp = wasNonExp || event.isNonExponential();
+            //                 }
+            //                 ++masterCount;
+            //                 if (wasNonExp) {
+            //                     STORM_LOG_THROW(masterCount <= 1, storm::exceptions::WrongFormatException, "GSMP error, found more than one master non-exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ".");
+            //                 } else {
+            //                     STORM_LOG_THROW(masterCount <= 1 || storm::settings::getModule<storm::settings::modules::IOSettings>().isExpSyncBackwardCompatibleSet(), storm::exceptions::WrongFormatException, "GSMP error, found more than one master exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ". If this was intentional, enable ExpSyncBackwardCompatible flag");
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
             
             if(lvl >= Program::ValidityCheckLevel::READYFORPROCESSING) {
                 // We check for each global variable and each labeled command, whether there is at most one instance writing to that variable.
