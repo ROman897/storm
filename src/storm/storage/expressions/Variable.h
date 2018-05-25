@@ -136,7 +136,6 @@ namespace storm {
              */
             bool hasNumericalType() const;
 
-            // Roman code
             /*!
              * Checks whether the variable is of nonlinear distribution type.
              *

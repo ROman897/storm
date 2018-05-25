@@ -67,11 +67,6 @@ namespace storm {
             return v.toRationalNumber(this->toExpression());
         }
 
-        // Roman code
-        /*EventDistributionLiteralExpression BaseExpression::evaluateAsDistribution(Valuation const*) const {
-            STORM_LOG_THROW(false, storm::exceptions::InvalidTypeException, "Unable to evaluate expression as distribution.");
-        }*/
-
         uint_fast64_t BaseExpression::getArity() const {
             return 0;
         }

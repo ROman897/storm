@@ -283,7 +283,6 @@ namespace storm {
 
             // if the model is GSMP, we need to get transitions in a very specific way,
             // only fusing choices that share the same action label together
-            // Roman Code
             if (this->getModelType() == ModelType::GSMP && totalNumberOfChoices > 1) {
                 // iterate over all choices and fuse together choices with same event
                 auto runner = allChoices.begin();

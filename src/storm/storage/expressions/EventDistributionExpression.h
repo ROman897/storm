@@ -48,8 +48,6 @@ namespace storm {
              * @param manager The manager responsible for this expression.
              * @param type representation of the value of the literal.
              */
-            // EventDistributionExpression(ExpressionManager const& manager, std::string const& valueAsString);
-
             // Instantiate constructors and assignments with their default implementations.
             EventDistributionExpression(EventDistributionExpression const& other) = default;
             EventDistributionExpression& operator=(EventDistributionExpression const& other) = delete;
@@ -58,15 +56,10 @@ namespace storm {
 
             virtual ~EventDistributionExpression() = default;
             
-            // Override base class methods.
-            // virtual DistributionLiteral_d evaluateAsDistribution_d(Valuation const* valuation = nullptr) const override;
-            // virtual DistributionLiteral_r evaluateAsDistribution_r(Valuation const* valuation = nullptr) const override;
-            
             virtual bool isLiteral() const override;
             virtual void gatherVariables(std::set<storm::expressions::Variable>& variables) const override;
             virtual std::shared_ptr<BaseExpression const> simplify() const override;
             virtual boost::any accept(ExpressionVisitor& visitor, boost::any const& data) const override;
-            // virtual bool isEventDistributionExpression() const override;
             virtual uint_fast64_t getArity() const override;
             std::shared_ptr<BaseExpression const> getParam1() const;
         
@@ -76,20 +69,6 @@ namespace storm {
 
             EventDistributionTypes getDistributionType() const override;
 
-            /*!
-             * Retrieves the value of the double literal.
-             *
-             * @return The value of the double literal.
-             */
-            // DistributionLiteral_d getValueAsDistributionLiteral_d() const;
-
-            /*!
-             * Retrieves the value of the double literal.
-             *
-             * @return The value of the double literal.
-             */
-            // DistributionLiteral_r getValue() const;
-            
         protected:
             // Override base class method.
             virtual void printToStream(std::ostream& stream) const override;

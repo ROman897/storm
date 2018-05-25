@@ -116,8 +116,6 @@ namespace storm {
              */
             Expression rational(storm::RationalNumber const& value) const;
 
-            // Roman code
-
             /*!
              * Creates an expression that characterizes the given nonlinear distribution literal.
              *
@@ -161,7 +159,6 @@ namespace storm {
              */
             Type const& getRationalType() const;
 
-            // Roman code
             /*!
              * Retrieves the nonlinear distribution type.
              *
@@ -238,7 +235,6 @@ namespace storm {
              */
             Variable declareRationalVariable(std::string const& name, bool auxiliary = false);
             
-            //Roman code
             /*!
              * Declares a new nonlinear distribution variable with a name that must not yet exist and its corresponding type. Note that
              * the name must not start with two underscores since these variables are reserved for internal use only.
@@ -328,7 +324,6 @@ namespace storm {
              */
             Variable declareFreshIntegerVariable(bool auxiliary = false, std::string const& prefix = "_x");
             
-            // Roman code
             /*!
              * Declares a variable with integer type whose name is guaranteed to be unique and not yet in use.
              *
@@ -376,8 +371,6 @@ namespace storm {
              */
             uint_fast64_t getNumberOfRationalVariables() const;
 
-
-            // Roman code
             /*!
              * Retrieves the number of nonlinear distribution variables.
              *
@@ -508,7 +501,6 @@ namespace storm {
             uint_fast64_t numberOfIntegerVariables;
             uint_fast64_t numberOfBitVectorVariables;
             uint_fast64_t numberOfRationalVariables;
-            // Roman code
             uint_fast64_t numberOfEventDistributionVariables;
             uint_fast64_t numberOfEventVariables;
             // end code
@@ -521,7 +513,6 @@ namespace storm {
             uint_fast64_t numberOfAuxiliaryIntegerVariables;
             uint_fast64_t numberOfAuxiliaryBitVectorVariables;
             uint_fast64_t numberOfAuxiliaryRationalVariables;
-            // Roman code
             uint_fast64_t numberOfAuxiliaryEventDistributionVariables;
             uint_fast64_t numberofAuxiliaryEventVariables;
             // end code

@@ -24,21 +24,6 @@ namespace storm {
                     // intentionally left empty
                 }
 
-            /*EventDistributionExpression::EventDistributionExpression(ExpressionManager const& manager, std::string const& valueAsString){
-
-            }*/
-
-            /*DistributionLiteral_d EventDistributionExpression::evaluateAsDistribution_d(Valuation const* valuation = nullptr) const{
-                auto v1 = param1->evaluateAsRational();
-                auto v2 = param2->evaluateAsRational();
-                return {distributionType, v1, v2};
-            }
-            DistributionLiteral_r EventDistributionExpression::evaluateAsDistribution_r(Valuation const* valuation = nullptr) const{
-                auto v1 = param1->evaluateAsDouble();
-                auto v2 = param2->evaluateAsDouble();
-                return {distributionType, v1, v2};   
-            }*/
-            
              bool EventDistributionExpression::isLiteral() const {
                 return param1->isLiteral() && param2->isLiteral();
             }
@@ -59,11 +44,7 @@ namespace storm {
             }
             boost::any EventDistributionExpression::accept(ExpressionVisitor& visitor, boost::any const& data) const {
                 return visitor.visit(*this, data);
-                // return boost::any();
             }
-            /*bool EventDistributionExpression::isEventDistributionExpression() const {
-                return true;
-            }*/
             uint_fast64_t EventDistributionExpression::getArity() const {
                 return param2 ? 2 : 1;
             }
@@ -88,30 +69,10 @@ namespace storm {
                 STORM_LOG_THROW(false, storm::exceptions::InvalidAccessException, "Unable to access operand " << operandIndex << "in expression distribution expression");
             }
 
-
             EventDistributionTypes EventDistributionExpression::getDistributionType() const {
                 return distributionType;
             }
 
-
-            /*!
-             * Retrieves the value of the double literal.
-             *
-             * @return The value of the double literal.
-             */
-            /*DistributionLiteral_d EventDistributionExpression::getValueAsDistributionLiteral_d() const{
-                return evaluateAsDistribution_d();
-            }*/
-
-            /*!
-             * Retrieves the value of the double literal.
-             *
-             * @return The value of the double literal.
-             */
-            /*DistributionLiteral_r EventDistributionExpression::getValue() const{
-                return evaluateAsDistribution_r();
-            }*/
-            
             // Override base class method.
             void EventDistributionExpression::printToStream(std::ostream& stream) const {
                 stream << distributionTypeToString.at(distributionType) << "(" << *param1;

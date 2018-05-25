@@ -231,17 +231,8 @@ namespace storm {
 
         storm::expressions::Expression ExpressionCreator::createDistributionExpression(storm::expressions::EventDistributionTypes type ,storm::expressions::Expression const& e1, boost::optional<storm::expressions::Expression> const& e2, bool& pass) const{
             if (this->createExpressions) {
-                // std::cout << "before createDistr" << std::endl;
-
-                    // TODO(Roman): this might be a good place to check whether distributed is provided
-                    // required number of parameters
-                    // pass = false;
                     return storm::expressions::distribution(type, e1, e2);
-                    // return manager.integer(0);
-
             }
-                // std::cout << "dont create expr" << std::endl;
-            
             return manager.boolean(false);   
         }
 

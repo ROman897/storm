@@ -69,7 +69,6 @@ namespace storm {
             for (auto const& var : this->getIntegerVariables()) {
                 result.insert(var.getExpressionVariable());
             }
-            // TODO Roman: decide if we need to include event variables in this!
             for (auto const& var : this->getEventVariables()) {
                 result.insert(var.getExpressionVariable());
             }
@@ -223,7 +222,6 @@ namespace storm {
                 newIntegerVariables.emplace_back(integerVariable.substitute(substitution));
             }
 
-            // Roman Code
             std::vector<EventVariable> newEventVariables;
             newEventVariables.reserve(this->getNumberOfEventVariables());
             for (auto const& eventVariable : this->getEventVariables()) {

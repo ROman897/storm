@@ -149,7 +149,6 @@ namespace storm {
         labels(labels), labelToIndexMap(), actionToIndexMap(actionToIndexMap), indexToActionMap(), actions(),
         synchronizingActionIndices(), actionIndicesToModuleIndexMap(), variableToModuleIndexMap()
         {
-            // std::cout << "Program created! " << std::endl;
             
             // Start by creating the necessary mappings from the given ones.
             this->createMappings();
@@ -183,7 +182,6 @@ namespace storm {
                 // Then check the validity.
                 this->checkValidity(Program::ValidityCheckLevel::VALIDINPUT);
             }
-            // std::cout << "program construction finished" << std::endl;
         }
         
         Program::ModelType Program::getModelType() const {
@@ -1031,10 +1029,6 @@ namespace storm {
                     all.insert(variable.getExpressionVariable());
                 }
 
-                // TODO Roman: iterate here over event variables and check argument validity of distr.
-                // TODO Roman: check that expression is distribution
-
-                // Roman Code
                 for (auto const& variable : module.getEventVariables()) {
 
                     STORM_LOG_THROW(variable.getDistributionExpression().hasDistributionType(), storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << ": distribution expression must evaluate to type 'distribution'.");
@@ -1110,8 +1104,7 @@ namespace storm {
                         hasLabeledMarkovianCommand = true;
                     }
 
-                    // TODO Roman: check that command event is valid and declared
-                    // Roman Code
+                    // check that command event is valid and declared
                     if (command.isMaster()) {
                         std::string const& eventName = command.getEventName();
                         auto eventIt = legalEventNames.find(eventName); 
@@ -1257,40 +1250,6 @@ namespace storm {
                 STORM_LOG_THROW(isValid, storm::exceptions::WrongFormatException, "Error in " << formula.getFilename() << ", line " << formula.getLineNumber() << ": formula expression refers to unknown identifiers.");
             }
 
-            // Roman code
-            // check if there is at most one master event for given action or that exponential events can be grouped together
-            // if (modelType == Program::ModelType::GSMP) {
-            // // check that there is at most one master event for each label
-            //     for (auto const& act : this->actionIndicesToModuleIndexMap) {
-            //         bool wasNonExp = false;
-            //         uint_fast64_t masterCount = 0;
-            //         for (auto moduleIndex : act.second) {
-            //             auto const& module = modules[moduleIndex];
-            //             auto const& commands = module.getCommandIndicesByActionIndex(act.first);
-            //             for (auto commandIndex : commands) {
-            //                 auto const& command = module.getCommand(commandIndex);
-            //                 if (command.hasEvent() && command.isSlave()) {
-            //                     continue;
-            //                 }
-
-            //                 // if command has no event, it will be later 
-            //                 // translated into multiple exponential commands,
-            //                 // but don't expand command it to multiple commands just yet
-            //                 if (command.hasEvent() && command.isMaster()) {
-            //                     auto const& event = module.getEventVariable(command.getEventName());
-            //                     wasNonExp = wasNonExp || event.isNonExponential();
-            //                 }
-            //                 ++masterCount;
-            //                 if (wasNonExp) {
-            //                     STORM_LOG_THROW(masterCount <= 1, storm::exceptions::WrongFormatException, "GSMP error, found more than one master non-exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ".");
-            //                 } else {
-            //                     STORM_LOG_THROW(masterCount <= 1 || storm::settings::getModule<storm::settings::modules::IOSettings>().isExpSyncBackwardCompatibleSet(), storm::exceptions::WrongFormatException, "GSMP error, found more than one master exponential event for action: " << indexToActionMap.at(act.first) << ", line " << command.getLineNumber() << ". If this was intentional, enable ExpSyncBackwardCompatible flag");
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-            
             if(lvl >= Program::ValidityCheckLevel::READYFORPROCESSING) {
                 // We check for each global variable and each labeled command, whether there is at most one instance writing to that variable.
                 std::set<std::pair<std::string, std::string>> globalBVarsWrittenToByCommand;
@@ -1352,7 +1311,6 @@ namespace storm {
                     }
                 }
 
-                // Roman Code
                 if (modelType == ModelType::GSMP) {
                     for (auto const& command : module.getCommands()) {
                         if (!command.isLabeled() || command.isSlave()) {
@@ -1426,7 +1384,6 @@ namespace storm {
                     }
                 }
 
-                // Roman Code
                 // find events that are not being used and remove them
                 std::vector<storm::prism::EventVariable> newEventVariables;
                 std::set<std::string> usedEvents;
@@ -1453,7 +1410,6 @@ namespace storm {
             std::map<std::string, uint_fast64_t> newActionToIndexMap;
             std::vector<RewardModel> newRewardModels;
 
-            // Roman Code
             // add to action indices that are being deleted all action indices that don't have master
             if (modelType == ModelType::GSMP && actionIndicesWithMaster.size() < this->getSynchronizingActionIndices().size()) {
                 std::set<uint_fast64_t> actionIndicesWithoutMaster;
@@ -1492,7 +1448,6 @@ namespace storm {
                 }
             }
 
-            // Roman Code
             if (this->getModelType() == ModelType::GSMP) {
                 // iterate over exponential commands without event and transform 
                 // each command into new command with own exponential event and 
@@ -1584,9 +1539,6 @@ namespace storm {
                     solver->add(variable.getExpression() <= variable.getUpperBoundExpression());
                 }
                 
-                // TODO(Roman): no idea how to implement this yet
-
-
                 // The commands without a synchronizing action name, can simply be copied (plus adjusting the global
                 // indices of the command and its updates).
                 for (auto const& command : module.getCommands()) {
@@ -1726,7 +1678,6 @@ namespace storm {
                     solver->pop();
                 }
             }
-            // TODO(Roman): no idea how to implement this yet
             // Finally, we can create the module and the program and return it.
             storm::prism::Module singleModule(newModuleName.str(), allBooleanVariables, allIntegerVariables, {}, newCommands, this->getFilename(), 0);
             return Program(manager, this->getModelType(), this->getConstants(), std::vector<storm::prism::BooleanVariable>(), std::vector<storm::prism::IntegerVariable>(), this->getFormulas(), {singleModule}, actionToIndexMap, this->getRewardModels(), this->getLabels(), this->getOptionalInitialConstruct(), this->getOptionalSystemCompositionConstruct(), this->getFilename(), 0, true);
@@ -1814,9 +1765,6 @@ namespace storm {
             for (uint_fast64_t i = 1; i < commands.size(); ++i) {
                 newGuard = newGuard && commands[i].get().getGuardExpression();
             }
-            // TODO(Roman): no idea how to implement this yet
-            // FIX: this is handles synchronization!!
-            // TODO take a look at this method!!
             return Command(newCommandIndex, false, actionIndex, actionName, newGuard, newUpdates, this->getFilename(), 0);
         }
         

@@ -283,7 +283,6 @@ namespace storm {
             // A mapping from integer variables to the corresponding indices in the vector.
             std::map<std::string, uint_fast64_t> integerVariableToIndexMap;
 
-            // Roman Code
             // A list of event variables
             std::vector<storm::prism::EventVariable> eventVariables;
 

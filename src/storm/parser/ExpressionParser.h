@@ -200,7 +200,6 @@ namespace storm {
                 }
             };
 
-            // Roman code
             struct distributionOperatorStruct : qi::symbols<char, storm::expressions::EventDistributionTypes> {
                 distributionOperatorStruct() {
                     add

@@ -170,7 +170,6 @@ namespace storm {
                 
                 // If there is no behavior, we might have to introduce a self-loop.
                 if (behavior.empty()) {
-                    // TODO(Roman): create event for deadlock transition?
                     if (!storm::settings::getModule<storm::settings::modules::CoreSettings>().isDontFixDeadlocksSet() || !behavior.wasExpanded()) {
                         // If the behavior was actually expanded and yet there are no transitions, then we have a deadlock state.
                         if (behavior.wasExpanded()) {
@@ -190,6 +189,7 @@ namespace storm {
                         transitionMatrixBuilder.addNextValue(currentRow, currentIndex, storm::utility::one<ValueType>());
 
                         if (generator->getModelType() == storm::generator::ModelType::GSMP) {
+                            // we need to create a new GSMP event for the deadlock state
                             uint_fast64_t eventId = eventVariables.get().size();
                             eventVariables.get().push_back(EventVariableInformation<ValueType>(storm::utility::one<ValueType>(), storm::expressions::EventDistributionTypes::Exp));
                             std::string new_name = "deadlock_event_" + std::to_string(eventId);
@@ -228,10 +228,6 @@ namespace storm {
                         transitionMatrixBuilder.newRowGroup(currentRow);
                     }
                     
-                    // Roman: behavior will now contain multiple choices, one
-                    // for each event active in the current state
-                    // add every choice as a new row into the matrix.
-
                     // Now add all choices.
                     for (auto const& choice : behavior) {
                         

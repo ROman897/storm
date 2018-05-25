@@ -12,7 +12,6 @@ namespace storm {
         }
 
         bool EventVariable::isNonExponential() const {
-            // return true;
             return getDistributionExpression().getDistributionType() != expressions::EventDistributionTypes::Exp;
         }
 
@@ -22,7 +21,6 @@ namespace storm {
         }
 
         void EventVariable::createMissingInitialValue() {
-            
         }
 
 

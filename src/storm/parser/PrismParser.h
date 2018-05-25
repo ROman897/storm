@@ -98,9 +98,7 @@ namespace storm {
                     ("mdp", storm::prism::Program::ModelType::MDP)
                     ("ctmdp", storm::prism::Program::ModelType::CTMDP)
                     ("ma", storm::prism::Program::ModelType::MA)
-                    // Roman modification
                     ("gsmp", storm::prism::Program::ModelType::GSMP);
-                    // end mod
                 }
             };
             
@@ -127,7 +125,6 @@ namespace storm {
                     ("ceil", 18)
                     ("init", 19)
                     ("endinit", 20)
-                    // Roman modification
                     ("gsmp", 21)
                     ("distribution", 22)
                     ("event", 23)
@@ -136,7 +133,6 @@ namespace storm {
                     ("uniform", 26)
                     ("dirac", 27)
                     ("erlang", 28);
-                    // end mod
                 }
             };
             
@@ -208,16 +204,13 @@ namespace storm {
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedBooleanConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedIntegerConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedDoubleConstantDefinition;
-            // Roman code
             qi::rule<Iterator, storm::prism::Constant(), Skipper> undefinedEventDistributionConstantDefinition;
-            // end code
+
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedBooleanConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedIntegerConstantDefinition;
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedDoubleConstantDefinition;
-            // Roman code
             qi::rule<Iterator, storm::prism::Constant(), Skipper> definedEventDistributionConstantDefinition;
-            // end code
             
             // Rules for global variable definitions.
             qi::rule<Iterator, qi::unused_type(GlobalProgramInformation&), Skipper> globalVariableDefinition;
@@ -234,15 +227,11 @@ namespace storm {
             qi::rule<Iterator, storm::prism::BooleanVariable(), qi::locals<storm::expressions::Expression>, Skipper> booleanVariableDefinition;
             qi::rule<Iterator, storm::prism::IntegerVariable(), qi::locals<storm::expressions::Expression>, Skipper> integerVariableDefinition;
 
-            // Roman code
-            // used for declaring an event variable
+            // Rule for declaring an event variable
             qi::rule<Iterator, storm::prism::EventVariable(), Skipper> eventVariableDefinition;
-            // end code
             
-            // Roman code
-            // used for parsing event name inside of a command
+            // Rule for parsing event name inside of a command
             qi::rule<Iterator, std::string(), Skipper> eventCommandParser;
-            // end code
 
             // Rules for command definitions.
             qi::rule<Iterator, storm::prism::Command(GlobalProgramInformation&), qi::locals<bool>, Skipper> commandDefinition;

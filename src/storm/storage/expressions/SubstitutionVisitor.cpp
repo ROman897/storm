@@ -120,7 +120,6 @@ namespace storm {
             return expression.getSharedPointer();
         }
 
-        // Roman Code
         template <typename MapType>
         boost::any SubstitutionVisitor<MapType>::visit(EventDistributionExpression const& expression, boost::any const& data) {
 

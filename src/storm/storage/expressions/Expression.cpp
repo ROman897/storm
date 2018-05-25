@@ -351,18 +351,12 @@ namespace storm {
             assertSameManager(first.getBaseExpression(), second.getBaseExpression());
             return Expression(std::shared_ptr<BaseExpression>(new BinaryNumericalFunctionExpression(first.getBaseExpression().getManager(), first.getType().minimumMaximum(second.getType()), first.getBaseExpressionPointer(), second.getBaseExpressionPointer(), BinaryNumericalFunctionExpression::OperatorType::Max)));
         }
-        // Roman code
         Expression distribution(EventDistributionTypes type, Expression const& first, boost::optional<Expression> const& second) {
-            // return first;
             if (second){
-                // std::cout << "Expression::distribution binary" << std::endl;
                 assertSameManager(first.getBaseExpression(), second.get().getBaseExpression());
                 return Expression(std::shared_ptr<BaseExpression>(new EventDistributionExpression(first.getBaseExpression().getManager(), type, first.getBaseExpressionPointer(), second.get().getBaseExpressionPointer())));
             }
-            auto rx = Expression(std::shared_ptr<BaseExpression>(new EventDistributionExpression(first.getBaseExpression().getManager(), type, first.getBaseExpressionPointer())));
-            // std::cout << "Expression::distribution unary" << std::endl;
-            // std::cout << rx << std::endl;
-            return rx;
+            return Expression(std::shared_ptr<BaseExpression>(new EventDistributionExpression(first.getBaseExpression().getManager(), type, first.getBaseExpressionPointer())));
         }
 
         Expression distribution(EventDistributionTypes type, Expression const& first) {

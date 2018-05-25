@@ -80,19 +80,6 @@ namespace storm {
             return Expression(std::make_shared<RationalLiteralExpression>(*this, value));
         }
 
-        // Roman code
-        /*Expression ExpressionManager::EventDistribution(EventDistributionTypes type, Expression const& exp1, Expression const& exp2) const{
-            // TODO(Roman): not sure if this will be properly used
-            // TODO FIX this does not work as it is
-            return Expression(std::make_shared<EventDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1)), std::shared_ptr<BaseType>( new Expression(exp2))));
-        }*/
-
-        /*Expression ExpressionManager::EventDistribution(EventDistributionTypes type, storm::RationalNumber const& param1) const{
-            // TODO(Roman): not sure if this will be properly used
-            return Expression(std::make_shared<EventDistributionExpression>(*this, std::shared_ptr<BaseType>( new Expression(exp1))));
-        }*/
-        // end code
-
         bool ExpressionManager::operator==(ExpressionManager const& other) const {
             return this == &other;
         }
@@ -206,7 +193,6 @@ namespace storm {
                         offset = numberOfBitVectorVariables++ + numberOfIntegerVariables;
                     } else if (variableType.isRationalType()) {
                         offset = numberOfRationalVariables++;
-                        // Roman modification
                     } else if (variableType.isEventDistributionType()) {
                         offset = numberOfEventDistributionVariables++;
                     } else if (variableType.isEventType()) {
@@ -221,7 +207,6 @@ namespace storm {
                         offset = numberOfBitVectorVariables++ + numberOfIntegerVariables;
                     } else if (variableType.isRationalType()) {
                         offset = numberOfRationalVariables++;
-                        // Roman modification
                     } else if (variableType.isEventDistributionType()) {
                         offset = numberOfEventDistributionVariables++;
                     } else if (variableType.isEventType()) {
@@ -276,7 +261,6 @@ namespace storm {
         Variable ExpressionManager::declareFreshRationalVariable(bool auxiliary, const std::string& prefix) {
             return declareFreshVariable(this->getRationalType(), auxiliary, prefix);
         }
-        // Roman code
         Variable ExpressionManager::declareFreshEventDistributionVariable(bool auxiliary, const std::string& prefix) {
             return declareFreshVariable(this->getEventDistributionType(), auxiliary, prefix);
         }
@@ -295,7 +279,6 @@ namespace storm {
                 return numberOfBitVectorVariables;
             } else if (variableType.isRationalType()) {
                 return numberOfRationalVariables;
-                // Roman modification
             } else if (variableType.isEventDistributionType()){
                 return numberOfEventDistributionVariables;
             }
@@ -323,7 +306,6 @@ namespace storm {
             return numberOfRationalVariables;
         }
 
-        // Roman code
         uint_fast64_t ExpressionManager::getNumberOfEventDistributionVariables() const{
             return numberOfEventDistributionVariables;
         }

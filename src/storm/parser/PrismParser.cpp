@@ -96,10 +96,8 @@ namespace storm {
             undefinedDoubleConstantDefinition = ((qi::lit("const") >> qi::lit("double")) > identifier > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createUndefinedDoubleConstant, phoenix::ref(*this), qi::_1)];
             undefinedDoubleConstantDefinition.name("undefined double constant definition");
             
-            // Roman code
             undefinedEventDistributionConstantDefinition = ((qi::lit("const") >> qi::lit("distribution")) > identifier >> qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createUndefinedEventDistributionConstant, phoenix::ref(*this), qi::_1)];
             undefinedEventDistributionConstantDefinition.name("undefined nonlinear distribution constant definition");
-            // end
 
             undefinedConstantDefinition = (undefinedBooleanConstantDefinition | undefinedDoubleConstantDefinition | undefinedIntegerConstantDefinition | undefinedEventDistributionConstantDefinition);
             undefinedConstantDefinition.name("undefined constant definition");
@@ -113,10 +111,8 @@ namespace storm {
             definedDoubleConstantDefinition = ((qi::lit("const") >> qi::lit("double") >> identifier >> qi::lit("=")) > expression_ > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createDefinedDoubleConstant, phoenix::ref(*this), qi::_1, qi::_2)];
             definedDoubleConstantDefinition.name("defined double constant declaration");
             
-            // Roman code
             definedEventDistributionConstantDefinition = ((qi::lit("const") >> qi::lit("distribution") >> identifier >> qi::lit("=")) > expression_ > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createDefinedEventDistributionConstant, phoenix::ref(*this), qi::_1, qi::_2)];
             definedEventDistributionConstantDefinition.name("defined nonlinear distribution constant declaration");
-            // end
 
             definedConstantDefinition %= (definedBooleanConstantDefinition | definedDoubleConstantDefinition | definedIntegerConstantDefinition | definedEventDistributionConstantDefinition);
             definedConstantDefinition.name("defined constant definition");
@@ -130,14 +126,12 @@ namespace storm {
             integerVariableDefinition = ((identifier >> qi::lit(":") >> qi::lit("[")[phoenix::bind(&PrismParser::allowDoubleLiterals, phoenix::ref(*this), false)]) > expression_ > qi::lit("..") > expression_ > qi::lit("]")[phoenix::bind(&PrismParser::allowDoubleLiterals, phoenix::ref(*this), true)] > -(qi::lit("init") > expression_[qi::_a = qi::_1]) > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createIntegerVariable, phoenix::ref(*this), qi::_1, qi::_2, qi::_3, qi::_a)];
             integerVariableDefinition.name("integer variable definition");
 
-            // Roman Code
             eventVariableDefinition = (((qi::lit("event") >> identifier >> qi::lit("=") >> expression_) > qi::lit(";"))[qi::_val = phoenix::bind(&PrismParser::createEventVariable, phoenix::ref(*this), qi::_1, qi::_2)]);
             eventVariableDefinition.name("event variable definition");
             
             variableDefinition = (booleanVariableDefinition[phoenix::push_back(qi::_r1, qi::_1)] | integerVariableDefinition[phoenix::push_back(qi::_r2, qi::_1)] | eventVariableDefinition[phoenix::push_back(qi::_r3, qi::_1)]);
             variableDefinition.name("variable declaration");
             
-            // TODO(Roman): does it make sense to define event as global?
             globalVariableDefinition = (qi::lit("global") > (booleanVariableDefinition[phoenix::push_back(phoenix::bind(&GlobalProgramInformation::globalBooleanVariables, qi::_r1), qi::_1)] | integerVariableDefinition[phoenix::push_back(phoenix::bind(&GlobalProgramInformation::globalIntegerVariables, qi::_r1), qi::_1)]));
             globalVariableDefinition.name("global variable declaration list");
                         
@@ -275,7 +269,6 @@ namespace storm {
             qi::on_error<qi::fail>(start, handler(qi::_1, qi::_2, qi::_3, qi::_4));
         }
         
-        // Roman modification
         void PrismParser::moveToSecondRun() {
             // In the second run, we actually need to parse the commands instead of just skipping them,
             // so we adapt the rule for parsing commands.
@@ -291,9 +284,7 @@ namespace storm {
             this->secondRun = true;
             this->expressionParser->setIdentifierMapping(&this->identifiers_);
             this->globalProgramInformation.moveToSecondRun();
-            // std::cout << "move to second run!" << std::endl;
         }
-        // end modification
         
         void PrismParser::allowDoubleLiterals(bool flag) {
             this->expressionParser->setAcceptDoubleLiterals(flag);
@@ -402,7 +393,6 @@ namespace storm {
             return storm::prism::Constant(manager->getVariable(newConstant), this->getFilename());
         }
         
-        // Roman code
         storm::prism::Constant PrismParser::createUndefinedEventDistributionConstant(std::string const& newConstant) const {
             if (!this->secondRun) {
                 try {
@@ -418,7 +408,6 @@ namespace storm {
             }
             return storm::prism::Constant(manager->getVariable(newConstant), this->getFilename());
         }
-        // end code
 
 
         storm::prism::Constant PrismParser::createDefinedBooleanConstant(std::string const& newConstant, storm::expressions::Expression expression) const {
@@ -469,13 +458,10 @@ namespace storm {
             return storm::prism::Constant(manager->getVariable(newConstant), expression, this->getFilename());
         }
         
-        // Roman code
         storm::prism::Constant PrismParser::createDefinedEventDistributionConstant(std::string const& newConstant, storm::expressions::Expression expression) const {
             if (!this->secondRun) {
                 try {
-                    // std::cout << "before create in manager" << std::endl;
                     storm::expressions::Variable newVariable = manager->declareEventDistributionVariable(newConstant, true);
-                    // std::cout << "after create in manager" << std::endl;
                     this->identifiers_.add(newConstant, newVariable.getExpression());
                 } catch (storm::exceptions::InvalidArgumentException const& e) {
                     if (manager->hasVariable(newConstant)) {
@@ -485,12 +471,8 @@ namespace storm {
                     }
                 }
             }
-            // std::cout << "storm prism constant" << std::endl;
-            auto x = storm::prism::Constant(manager->getVariable(newConstant), expression, this->getFilename());
-            // std::cout << "after storm prism constant" << std::endl;
-            return x;
+            return storm::prism::Constant(manager->getVariable(newConstant), expression, this->getFilename());
         }
-        // end code
 
         storm::prism::Formula PrismParser::createFormula(std::string const& formulaName, storm::expressions::Expression expression) {
             // Only register formula in second run. This prevents the parser from accepting formulas that depend on future
@@ -552,14 +534,11 @@ namespace storm {
         }
         
         storm::prism::Command PrismParser::createCommand(bool markovian, boost::optional<std::string> const& actionName, storm::expressions::Expression guardExpression, boost::optional<std::string> const& eventName, std::vector<storm::prism::Update> const& updates, GlobalProgramInformation& globalProgramInformation) const {
-            // std::cout << "create command " << std::endl;
             ++globalProgramInformation.currentCommandIndex;
             std::string realActionName = actionName ? actionName.get() : "";
             std::string realEventName = eventName ? eventName.get() : "";
 
             uint_fast64_t actionIndex = 0;
-            // uint_fast64_t eventIndex = 0;
-
             
             // If the action name was not yet seen, record it.
             auto nameIndexPair = globalProgramInformation.actionIndices.find(realActionName);
@@ -620,7 +599,6 @@ namespace storm {
             return storm::prism::IntegerVariable(manager->getVariable(variableName), lowerBoundExpression, upperBoundExpression, initialValueExpression, this->getFilename());
         }
 
-        // Roman code
         storm::prism::EventVariable PrismParser::createEventVariable(std::string const& variableName, storm::expressions::Expression expression) const {
             if (!this->secondRun) {
                 try {
@@ -636,10 +614,8 @@ namespace storm {
             }
             return storm::prism::EventVariable(manager->getVariable(variableName), expression, this->getFilename());
         }
-        // end code
         
         storm::prism::Module PrismParser::createModule(std::string const& moduleName, std::vector<storm::prism::BooleanVariable> const& booleanVariables, std::vector<storm::prism::IntegerVariable> const& integerVariables, std::vector<storm::prism::EventVariable> const& eventVariables, std::vector<storm::prism::Command> const& commands, GlobalProgramInformation& globalProgramInformation) const {
-            // std::cout << "create module" << std::endl;
             globalProgramInformation.moduleToIndexMap[moduleName] = globalProgramInformation.modules.size();
             return storm::prism::Module(moduleName, booleanVariables, integerVariables, eventVariables, commands, this->getFilename());
         }
@@ -664,7 +640,6 @@ namespace storm {
                     storm::expressions::Variable renamedVariable = manager->declareIntegerVariable(renamingPair->second);
                     this->identifiers_.add(renamingPair->second, renamedVariable.getExpression());
                 }
-                // Roman Code
                 for (auto const& variable : moduleToRename.getEventVariables()) {
                     auto const& renamingPair = renaming.find(variable.getName());
                     STORM_LOG_THROW(renamingPair != renaming.end(), storm::exceptions::WrongFormatException, "Parsing error in " << this->getFilename() << ", line " << get_line(qi::_3) << ": Event variable '" << variable.getName() << " was not renamed.");
@@ -721,8 +696,6 @@ namespace storm {
                     integerVariables.push_back(storm::prism::IntegerVariable(manager->getVariable(renamingPair->second), variable.getLowerBoundExpression().substitute(expressionRenaming), variable.getUpperBoundExpression().substitute(expressionRenaming), variable.hasInitialValue() ? variable.getInitialValueExpression().substitute(expressionRenaming) : variable.getInitialValueExpression(), this->getFilename(), get_line(qi::_1)));
                 }
 
-                // TODO Roman: rename event variables and command event
-                // Roman Code
                 std::vector<storm::prism::EventVariable> eventVariables;
                 for (auto const& variable : moduleToRename.getEventVariables()) {
                     auto const& renamingPair = renaming.find(variable.getName());
@@ -779,7 +752,6 @@ namespace storm {
         }
         
         storm::prism::Program PrismParser::createProgram(GlobalProgramInformation const& globalProgramInformation) const {
-            // std::cout << "create program" << std::endl;
             storm::prism::Program::ModelType finalModelType = globalProgramInformation.modelType;
             if (globalProgramInformation.modelType == storm::prism::Program::ModelType::UNDEFINED) {
                 STORM_LOG_WARN("Program does not specify model type. Implicitly assuming 'mdp'.");

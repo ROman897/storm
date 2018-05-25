@@ -76,8 +76,6 @@ namespace storm {
             storm::expressions::Expression createMinimumMaximumExpression(storm::expressions::Expression const& e1, storm::expressions::OperatorType const& operatorType, storm::expressions::Expression const& e2, bool& pass) const;
             storm::expressions::Expression createFloorCeilExpression(storm::expressions::OperatorType const& operatorType, storm::expressions::Expression const& e1, bool& pass) const;
             storm::expressions::Expression getIdentifierExpression(std::string const& identifier, bool& pass) const;
-            
-            // Roman code
             storm::expressions::Expression createDistributionExpression(storm::expressions::EventDistributionTypes type ,storm::expressions::Expression const& e1, boost::optional<storm::expressions::Expression> const& e2, bool& pass) const;
 
             

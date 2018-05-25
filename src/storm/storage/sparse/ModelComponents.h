@@ -83,7 +83,6 @@ namespace storm {
                 
                 // Continuous time specific components (CTMCs, Markov Automata):
 
-                // Roman Code
                 // stores indices of row groups and rows that belong to an event and particular state (only for GSMP).
                 boost::optional<std::vector<generator::EventVariableInformation<ValueType>>> eventVariables;
                 boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> eventToStatesMapping;
