@@ -15,6 +15,7 @@
 #include "storm/exceptions/InvalidArgumentException.h"
 #include "storm/exceptions/WrongFormatException.h"
 #include "storm/exceptions/UnexpectedException.h"
+#include "storm/exceptions/InvalidTypeException.h"
 
 namespace storm {
     namespace generator {
@@ -756,19 +757,24 @@ namespace storm {
         }
 
         template<typename ValueType, typename StateType>
-        void PrismNextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNamesToId) const {
+        void PrismNextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation<ValueType>>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNamesToId) const {
             uint_fast64_t index = 0;
             for (auto const& module : program.getModules()) {
                 for (auto const& event : module.getEventVariables()) {
-                    eventVariables.push_back(EventVariableInformation(event.isNonExponential()));
+                    auto const& distrExpr = event.getDistributionExpression();
+
+                    if (distrExpr.getArity() == 1) {
+                        eventVariables.push_back(EventVariableInformation<ValueType>(ValueType(this->evaluator->asRational(distrExpr.getOperand(1))), distrExpr.getDistributionType()));
+
+                    } else {
+                        eventVariables.push_back(EventVariableInformation<ValueType>(ValueType(this->evaluator->asRational(distrExpr.getOperand(1))), ValueType(this->evaluator->asRational(distrExpr.getOperand(2))), distrExpr.getDistributionType()));
+                    }
                     eventNamesToId[event.getName()] = index;
                     ++index;
                 }
             }
         }
 
-
-                
         template class PrismNextStateGenerator<double>;
 
 #ifdef STORM_HAVE_CARL

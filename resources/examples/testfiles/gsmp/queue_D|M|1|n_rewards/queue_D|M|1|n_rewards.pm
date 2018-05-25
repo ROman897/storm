@@ -6,8 +6,9 @@ gsmp
 
 const maxItem=12;
 
-rewards
+rewards "rewa"
 	items>0 : items;
+    [production] true : 1;
 endrewards
 
 module Queue

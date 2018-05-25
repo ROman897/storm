@@ -1036,6 +1036,9 @@ namespace storm {
 
                 // Roman Code
                 for (auto const& variable : module.getEventVariables()) {
+
+                    STORM_LOG_THROW(variable.getDistributionExpression().hasDistributionType(), storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << ": distribution expression must evaluate to type 'distribution'.");
+                    
                     std::set<storm::expressions::Variable> containedVariables = variable.getDistributionExpression().getVariables();
                     for (auto const& a : containedVariables) {
                         STORM_LOG_WARN(a.getName());
@@ -1050,7 +1053,6 @@ namespace storm {
                         }
                         //STORM_LOG_THROW(isValid, storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << "event: " << variable.getName() << ", distribution expression referes to unknown constants: " << boost::algorithm::join(illegalVariableNames, ",") << ".");
                     }
-                    STORM_LOG_THROW(variable.getDistributionExpression().hasDistributionType(), storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << ": distribution expression must evaluate to type 'distribution'.");
 
                     // Record the new identifier for future checks
                     variables.insert(variable.getExpressionVariable());

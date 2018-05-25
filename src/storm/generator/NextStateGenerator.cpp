@@ -155,7 +155,7 @@ namespace storm {
         }
 
         template<typename ValueType, typename StateType>
-        void NextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNameToId) const {
+        void NextStateGenerator<ValueType, StateType>::mapEvents(std::vector<EventVariableInformation<ValueType>>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNameToId) const {
             // intentionally left empty
         }
 

@@ -9,24 +9,24 @@ const maxItem=12;
 
 module Producer
 
-	event Prod_event = dirac(10);
+    event Prod_event = dirac(10);
 
-	[produce] true --Prod_event-> true; 
-	
+    [produce] true --Prod_event-> true; 
+    
 endmodule
 
 module Server
-    
-	event Serve_event = weibull(12,2.0);
 
-	[served] true --Serve_event-> true;
+    event Serve_event = weibull(12,2.0);
+
+    [served] true --Serve_event-> true;
 
 endmodule
 
 module Queue
 
-	items: [0..maxItem] init 0;
+    items: [0..maxItem] init 0;
 
-	[produce] items=0 --slave-> (items'=items+1);
-	[served] items>=3 --slave-> (items'=items-1);
+    [produce] items<maxItem --slave-> (items'=items+1);
+    [served] items>0 --slave-> (items'=items-1);
 endmodule

@@ -25,11 +25,6 @@ namespace storm {
             // Intentionally left empty.
         }
 
-        EventVariableInformation::EventVariableInformation(bool isNonExp) : isNonExponential(isNonExp) {
-            
-        }
-
-        
         LocationVariableInformation::LocationVariableInformation(storm::expressions::Variable const& variable, uint64_t highestValue, uint_fast64_t bitOffset, uint_fast64_t bitWidth) : variable(variable), highestValue(highestValue), bitOffset(bitOffset), bitWidth(bitWidth) {
             // Intentionally left empty.
         }

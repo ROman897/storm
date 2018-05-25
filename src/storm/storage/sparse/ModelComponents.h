@@ -33,7 +33,7 @@ namespace storm {
                                 bool rateTransitions = false,
                                 boost::optional<storm::storage::BitVector> const& markovianStates = boost::none,
                                 boost::optional<storm::storage::SparseMatrix<storm::storage::sparse::state_type>> const& player1Matrix = boost::none,
-                                boost::optional<std::vector<generator::EventVariableInformation>> const& eventVariables = boost::none,
+                                boost::optional<std::vector<generator::EventVariableInformation<ValueType>>> const& eventVariables = boost::none,
                                 boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> const& eventToStatesMapping = boost::none,
                                 boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> const& stateToEventsMapping = boost::none,
                                 boost::optional<std::unordered_map<std::string, uint_fast64_t>> const& eventNameToId = boost::none)
@@ -49,7 +49,7 @@ namespace storm {
                                 bool rateTransitions = false,
                                 boost::optional<storm::storage::BitVector>&& markovianStates = boost::none,
                                 boost::optional<storm::storage::SparseMatrix<storm::storage::sparse::state_type>>&& player1Matrix = boost::none,
-                                boost::optional<std::vector<generator::EventVariableInformation>> && eventVariables = boost::none,
+                                boost::optional<std::vector<generator::EventVariableInformation<ValueType>>> && eventVariables = boost::none,
                                 boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> && eventToStatesMapping = boost::none,
                                 boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> && stateToEventsMapping = boost::none,
                                 boost::optional<std::unordered_map<std::string, uint_fast64_t>> && eventNameToId = boost::none)
@@ -85,7 +85,7 @@ namespace storm {
 
                 // Roman Code
                 // stores indices of row groups and rows that belong to an event and particular state (only for GSMP).
-                boost::optional<std::vector<generator::EventVariableInformation>> eventVariables;
+                boost::optional<std::vector<generator::EventVariableInformation<ValueType>>> eventVariables;
                 boost::optional<std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>> eventToStatesMapping;
                 boost::optional<std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>> stateToEventsMapping;
                 boost::optional<std::unordered_map<std::string, uint_fast64_t>> eventNameToId;

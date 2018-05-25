@@ -4,7 +4,9 @@
 #include <vector>
 #include <boost/container/flat_map.hpp>
 
-#include "storm/storage/expressions/Variable.h" 
+#include "storm/storage/expressions/Variable.h"
+#include "storm/storage/expressions/EventDistributionTypes.h"
+
 
 namespace storm {
     namespace prism {
@@ -56,10 +58,17 @@ namespace storm {
         };
 
         // A structure storing information about the event variables of the model.
+        template <typename ValueType>
         struct EventVariableInformation {
-            EventVariableInformation(bool isNonExp);
+            EventVariableInformation(ValueType arg1, ValueType arg2, storm::expressions::EventDistributionTypes distributionType)
+            : arg1(arg1), arg2(arg2), distributionType(distributionType) {}
 
-            bool isNonExponential;
+            EventVariableInformation(ValueType arg1, storm::expressions::EventDistributionTypes distributionType)
+            : arg1(arg1), distributionType(distributionType) {}
+
+            storm::expressions::EventDistributionTypes distributionType;
+            ValueType arg1;
+            ValueType arg2;
         };
         
         // A structure storing information about the location variables of the model.

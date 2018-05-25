@@ -68,7 +68,7 @@ namespace storm {
             
             virtual std::shared_ptr<storm::storage::sparse::ChoiceOrigins> generateChoiceOrigins(std::vector<boost::any>& dataForChoiceOrigins) const;
 
-            virtual void mapEvents(std::vector<EventVariableInformation>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNameToId) const;
+            virtual void mapEvents(std::vector<EventVariableInformation<ValueType>>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNameToId) const;
             
         protected:
             /*!

@@ -26,8 +26,6 @@ namespace storm {
 
             bool isNonExponential() const;
 
-            
-
             /*!
              * Substitutes all identifiers in the event variable according to the given map.
              *

@@ -38,6 +38,7 @@
 #include "storm/exceptions/WrongFormatException.h"
 #include "storm/exceptions/InvalidArgumentException.h"
 #include "storm/exceptions/InvalidOperationException.h"
+#include "storm/storage/expressions/EventDistributionTypes.h"
 
 namespace storm {
     namespace builder {
@@ -139,7 +140,7 @@ namespace storm {
                 this->eventToStatesMapping = std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>>();
                 this->stateToEventsMapping = std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>>();
                 this->eventNameToId = std::unordered_map<std::string, uint_fast64_t>();
-                this->eventVariables = std::vector<EventVariableInformation>();
+                this->eventVariables = std::vector<EventVariableInformation<ValueType>>();
                 this->generator->mapEvents(eventVariables.get(), eventNameToId.get());
             }
 
@@ -190,7 +191,7 @@ namespace storm {
 
                         if (generator->getModelType() == storm::generator::ModelType::GSMP) {
                             uint_fast64_t eventId = eventVariables.get().size();
-                            eventVariables.get().push_back(EventVariableInformation(true));
+                            eventVariables.get().push_back(EventVariableInformation<ValueType>(storm::utility::one<ValueType>(), storm::expressions::EventDistributionTypes::Exp));
                             std::string new_name = "deadlock_event_" + std::to_string(eventId);
                             eventNameToId.get()[new_name] = eventId;
                             eventToStatesMapping.get()[eventId][currentRowGroup] = currentRow;
@@ -268,7 +269,7 @@ namespace storm {
                                 bool first = true;
                                 for (std::string const& eventName : choice.getEventNames()) {
 
-                                    STORM_LOG_THROW(!eventVariables[eventNameToId[eventName]].isNonExponential, storm::exceptions::WrongFormatException, "Invalid GSMP operation, non-exponential event \"" << eventName << "\" fusing with exponential events!");
+                                    STORM_LOG_THROW(eventVariables[eventNameToId[eventName]].distributionType == storm::expressions::EventDistributionTypes::Exp, storm::exceptions::WrongFormatException, "Invalid GSMP operation, non-exponential event \"" << eventName << "\" fusing with exponential events!");
 
                                     if (first) {
                                         first = false;
@@ -279,8 +280,15 @@ namespace storm {
                                 }
                                 auto it = eventNameToId.find(new_name);
                                 if (it == eventNameToId.end()) {
+
+                                    ValueType expRate = storm::utility::zero<ValueType>();
+                                    for (std::string const& eventName : choice.getEventNames()) {
+                                        auto const& event = eventVariables.at(eventNameToId.at(eventName));
+                                        expRate += event.arg1;
+                                    }
+
                                     eventId = eventVariables.size();
-                                    eventVariables.push_back(EventVariableInformation(true));
+                                    eventVariables.push_back(EventVariableInformation<ValueType>(expRate, storm::expressions::EventDistributionTypes::Exp));
                                     eventNameToId[new_name] = eventId; 
                                 } else {
                                     eventId = it->second;

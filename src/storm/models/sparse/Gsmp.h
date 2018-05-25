@@ -58,7 +58,7 @@ namespace storm {
 
             private:
                 std::unordered_map<std::string, uint_fast64_t> eventNameToId;
-                std::vector<generator::EventVariableInformation> eventVariables;
+                std::vector<generator::EventVariableInformation<ValueType>> eventVariables;
                 // mapping from event to pair consisting of row group and row number.
                 std::unordered_map<uint_fast64_t, std::map<uint_fast64_t, uint_fast64_t>> eventToStatesMapping;
                 std::unordered_map<uint_fast64_t, std::vector<uint_fast64_t>> stateToEventsMapping;

@@ -72,6 +72,8 @@ namespace storm {
         
             std::shared_ptr<BaseExpression const> getParam2() const;
 
+            virtual std::shared_ptr<BaseExpression const> getOperand(uint_fast64_t operandIndex) const override;
+
             EventDistributionTypes getDistributionType() const override;
 
             /*!

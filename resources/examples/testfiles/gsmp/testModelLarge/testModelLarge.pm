@@ -4,15 +4,15 @@
 
 gsmp
 
+const double defConstant = 4;
 const distribution uniDistr = uniform(4,8.8 + defConstant); // mixed arithmetics test
 
 const distribution erlangTest = erlang(7.1,8); // erlang test (value AND type !)
 
-const defConstant = 4;
 
-const undefConstant;
+//const undefConstant;
 
-const double undefConstant2;
+//const double undefConstant2;
 
 const double timeout = 5.7;
 

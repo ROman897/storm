@@ -73,9 +73,21 @@ namespace storm {
             }
         
             std::shared_ptr<BaseExpression const> EventDistributionExpression::getParam2() const {
-                STORM_LOG_THROW(static_cast<bool>(param2), storm::exceptions::InvalidAccessException, "Unable to access operand 2 in expression of arity 1.");
+                STORM_LOG_THROW(static_cast<bool>(param2), storm::exceptions::InvalidAccessException, "Unable to access operand 2 in distribution expression of arity 1.");
                 return param2;
             }
+
+            std::shared_ptr<BaseExpression const> EventDistributionExpression::getOperand(uint_fast64_t operandIndex) const {
+                if (operandIndex == 1) {
+                    return getParam1();
+                }
+
+                if (operandIndex == 2) {
+                    return getParam2();
+                }
+                STORM_LOG_THROW(false, storm::exceptions::InvalidAccessException, "Unable to access operand " << operandIndex << "in expression distribution expression");
+            }
+
 
             EventDistributionTypes EventDistributionExpression::getDistributionType() const {
                 return distributionType;

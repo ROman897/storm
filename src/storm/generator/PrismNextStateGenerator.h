@@ -32,7 +32,7 @@ namespace storm {
 
             virtual std::shared_ptr<storm::storage::sparse::ChoiceOrigins> generateChoiceOrigins(std::vector<boost::any>& dataForChoiceOrigins) const override;
 
-            virtual void mapEvents(std::vector<EventVariableInformation>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNamesToId) const override;
+            virtual void mapEvents(std::vector<EventVariableInformation<ValueType>>& eventVariables, std::unordered_map<std::string, uint_fast64_t>& eventNamesToId) const override;
 
 
         private:
@@ -87,17 +87,17 @@ namespace storm {
              * @return The labeled choices of the state.
              */
             std::vector<Choice<ValueType>> getLabeledChoices(CompressedState const& state, StateToIdCallback stateToIdCallback);
-            
+
             // The program used for the generation of next states.
             storm::prism::Program program;
             
             // The reward models that need to be considered.
             std::vector<std::reference_wrapper<storm::prism::RewardModel const>> rewardModels;
+
             
             // A flag that stores whether at least one of the selected reward models has state-action rewards.
             bool hasStateActionRewards;
         };
-        
     }
 }
 
