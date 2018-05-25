@@ -64,16 +64,9 @@ namespace storm {
         }
 
         EventDistributionTypes Expression::getDistributionType() const {
-            auto type = getType();
-            STORM_LOG_WARN("expression type at get distribution type: " << type.getStringRepresentation() << std::endl);
             return this->getBaseExpression().getDistributionType();
         }
 
-
-        /*storm::EventDistributionLiteralExpression Expression::evaluateAsDistribution() const {
-            return this->getBaseExpression().evaluateAsDistrubution();
-        }*/
-        
         Expression Expression::simplify() const {
             return Expression(this->getBaseExpression().simplify());
         }

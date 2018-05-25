@@ -290,13 +290,9 @@ namespace storm {
                                     eventId = it->second;
                                 }
 
-                                for (std::string const& eventName : choice.getEventNames()) {
-                                    STORM_LOG_WARN("found multiple events!!!!: " << eventName << std::endl);
-                                }
                             } else {
 
                                 std::string const& eventName = choice.getEventNames()[0];
-                                STORM_LOG_WARN("found event: " << eventName << std::endl);
                                 auto it = eventNameToId.find(eventName);
                                 STORM_LOG_THROW(it != eventNameToId.end(), storm::exceptions::WrongFormatException, "internal error, event'" + eventName + "' not found in the map of events");
 

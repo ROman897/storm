@@ -281,8 +281,8 @@ namespace storm {
                 allChoices.push_back(std::move(globalChoice));
             }
 
-            // if the model is GSMP, we need to get transitions in a very specific way,
-            // only fusing choices that share the same action label together
+            // if the model is GSMP, we need to get transitions in a very specific way
+            // only fuse choices that share the same action label together
             if (this->getModelType() == ModelType::GSMP && totalNumberOfChoices > 1) {
                 // iterate over all choices and fuse together choices with same event
                 auto runner = allChoices.begin();
@@ -327,7 +327,7 @@ namespace storm {
                                 eventChoice.setEvents(aggrChoice.first);
                                 for (auto const& choice : aggrChoice.second) {
                                     for (auto const& stateProbabilityPair : choice) {
-                                        eventChoice.addProbability(stateProbabilityPair.first, stateProbabilityPair.second / aggregatedChoices.size());
+                                        eventChoice.addProbability(stateProbabilityPair.first, stateProbabilityPair.second / aggrChoice.second.size());
                                     }
 
                                     if (this->options.isBuildChoiceLabelsSet() && choice.hasLabels()) {
@@ -354,7 +354,7 @@ namespace storm {
                                     }
                                     if (hasStateActionRewards) {
                                         // for state action rewards, we have to divide by number of all possible choices with current action label
-                                        eventChoice.addReward(stateActionRewardValue / currentEventChoices.size());
+                                        eventChoice.addReward(stateActionRewardValue / aggrChoice.second.size());
                                      }
                                 }
                                 allEventChoices.push_back(std::move(eventChoice));

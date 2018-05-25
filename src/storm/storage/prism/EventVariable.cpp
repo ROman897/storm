@@ -16,13 +16,11 @@ namespace storm {
         }
 
         EventVariable EventVariable::substitute(std::map<storm::expressions::Variable, storm::expressions::Expression> const& substitution) const {
-            STORM_LOG_WARN("substitution event variable!!" << std::endl);
             return EventVariable(this->getExpressionVariable(), this->getDistributionExpression().substitute(substitution), this->getFilename(), this->getLineNumber());
         }
 
         void EventVariable::createMissingInitialValue() {
         }
-
 
         std::ostream& operator<<(std::ostream& stream, EventVariable const& eventVariable) {
             stream << "event " << eventVariable.getName() << " = " << eventVariable.getDistributionExpression() << ";";
