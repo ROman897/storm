@@ -85,6 +85,13 @@ namespace storm {
                         uint_fast64_t index = program.getActionIndex(action);
                         auto it = subSynchronizingActionIndices.find(index);
                         STORM_LOG_THROW(it != subSynchronizingActionIndices.end(), storm::exceptions::WrongFormatException, "Cannot hide action '" << action << "', because module '" << composition.getSubcomposition() << " does not have this action.");
+                        for (auto const& module : program.getModules()) {
+                            for (auto const& command : module.getCommands()) {
+                                if (command.getActionIndex() == index) {
+                                    STORM_LOG_WARN("hiding synchronization label of a slave command, is this intentional?");
+                                }
+                            }
+                        }
                         subSynchronizingActionIndices.erase(it);
                     }
                 }
