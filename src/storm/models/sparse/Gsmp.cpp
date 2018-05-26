@@ -4,6 +4,7 @@
 #include "storm/exceptions/NotImplementedException.h"
 #include "storm/exceptions/InvalidArgumentException.h"
 #include "storm/utility/constants.h"
+#include "storm/storage/expressions/EventDistributionExpression.h"
 
 namespace storm {
     namespace models {
@@ -33,11 +34,17 @@ namespace storm {
             Gsmp<ValueType, RewardModelType>::Gsmp(storm::storage::sparse::ModelComponents<ValueType, RewardModelType>&& components)
                     : DeterministicModel<ValueType, RewardModelType>(storm::models::ModelType::Gsmp, std::move(components)), eventVariables(std::move(components.eventVariables.get())), eventToStatesMapping(std::move(components.eventToStatesMapping.get())), stateToEventsMapping(std::move(components.stateToEventsMapping.get())), eventNameToId(std::move(components.eventNameToId.get())) {
 
+                // TODO(Roman): can remove this once we start implementing new functionality
                 for (auto const& tt : eventNameToId) {
-                    STORM_LOG_WARN("event name: " << tt.first << " | id: " << tt.second << std::endl);
-                    STORM_LOG_WARN(getTransitionMatrixForEvent(tt.first) << std::endl);
+                    auto const& event = eventVariables[tt.second];
+                    std::stringstream st;
+                    st << event.arg1;
+                    if (event.argc == 2) {
+                        st << ", " << event.arg2;
+                    }
+                    STORM_PRINT_AND_LOG(tt.first << "= " << expressions::EventDistributionExpression::distributionTypeToString.at(event.distributionType) << "(" << st.str() << ")" << std::endl);
+                    STORM_PRINT_AND_LOG(std::endl << getTransitionMatrixForEvent(tt.first) << std::endl);
                 }
-                // Intentionally left empty
             }
    
             template<typename ValueType, typename RewardModelType>

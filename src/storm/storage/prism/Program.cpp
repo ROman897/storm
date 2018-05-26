@@ -1034,9 +1034,6 @@ namespace storm {
                     STORM_LOG_THROW(variable.getDistributionExpression().hasDistributionType(), storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << ": distribution expression must evaluate to type 'distribution'.");
                     
                     std::set<storm::expressions::Variable> containedVariables = variable.getDistributionExpression().getVariables();
-                    for (auto const& a : containedVariables) {
-                        STORM_LOG_WARN(a.getName());
-                    }
                     std::set<storm::expressions::Variable> illegalVariables;
                     std::set_difference(containedVariables.begin(), containedVariables.end(), constants.begin(), constants.end(), std::inserter(illegalVariables, illegalVariables.begin()));
                     bool isValid = illegalVariables.empty();
@@ -1045,6 +1042,7 @@ namespace storm {
                         for (auto const& var : illegalVariables) {
                             illegalVariableNames.push_back(var.getName());
                         }
+                        // in the current GSMP design we can't do this because distributions can refer to runtime variables through CTMC command transformation! 
                         //STORM_LOG_THROW(isValid, storm::exceptions::WrongFormatException, "Error in " << variable.getFilename() << ", line " << variable.getLineNumber() << "event: " << variable.getName() << ", distribution expression referes to unknown constants: " << boost::algorithm::join(illegalVariableNames, ",") << ".");
                     }
 

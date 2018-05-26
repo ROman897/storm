@@ -61,14 +61,15 @@ namespace storm {
         template <typename ValueType>
         struct EventVariableInformation {
             EventVariableInformation(ValueType arg1, ValueType arg2, storm::expressions::EventDistributionTypes distributionType)
-            : arg1(arg1), arg2(arg2), distributionType(distributionType) {}
+            : arg1(arg1), arg2(arg2), distributionType(distributionType), argc(2) {}
 
             EventVariableInformation(ValueType arg1, storm::expressions::EventDistributionTypes distributionType)
-            : arg1(arg1), distributionType(distributionType) {}
+            : arg1(arg1), distributionType(distributionType), argc(1) {}
 
             storm::expressions::EventDistributionTypes distributionType;
             ValueType arg1;
             ValueType arg2;
+            int argc;
         };
         
         // A structure storing information about the location variables of the model.

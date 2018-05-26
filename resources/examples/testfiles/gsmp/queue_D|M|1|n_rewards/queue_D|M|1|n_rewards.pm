@@ -6,18 +6,17 @@ gsmp
 
 const maxItem=12;
 
-rewards "rewa"
-	items>0 : items;
-    [production] true : 1;
+rewards
+    items>0 : items;
 endrewards
 
 module Queue
 
-	event Prod_event = dirac(10);
-	event Serve_event = exponential(2.0);
+    event Prod_event = dirac(10);
+    event Serve_event = exponential(2.0);
 
-	items: [0..maxItem] init 0;
+    items: [0..maxItem] init 0;
 
-	[production] items < maxItem --Prod_event-> (items'=items+1);
-	[consumption] items > 0 --Serve_event-> (items'=items-1);
+    [production] items < maxItem --Prod_event-> (items'=items+1);
+    [consumption] items > 0 --Serve_event-> (items'=items-1);
 endmodule

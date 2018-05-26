@@ -1,0 +1,7 @@
+ctmc
+
+module mod1
+    var : [0..3];
+    <>(var<3) -> 2.3: (var'=var+1); 
+    <>(var>0) -> 2.2: (var'=var-1);
+endmodule

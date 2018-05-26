@@ -277,10 +277,10 @@ namespace storm {
                                 auto it = eventNameToId.find(new_name);
                                 if (it == eventNameToId.end()) {
 
-                                    ValueType expRate = storm::utility::zero<ValueType>();
+                                    ValueType expRate = storm::utility::one<ValueType>();
                                     for (std::string const& eventName : choice.getEventNames()) {
                                         auto const& event = eventVariables.at(eventNameToId.at(eventName));
-                                        expRate += event.arg1;
+                                        expRate *= event.arg1;
                                     }
 
                                     eventId = eventVariables.size();

@@ -10,7 +10,7 @@ namespace storm {
     namespace expressions {
 
             const std::map<EventDistributionTypes, std::string> EventDistributionExpression::distributionTypeToString =
-                {{EventDistributionTypes::Exp, "Exponentian"}, {EventDistributionTypes::Weibull, "Weibull"},
+                {{EventDistributionTypes::Exp, "Exponential"}, {EventDistributionTypes::Weibull, "Weibull"},
                 {EventDistributionTypes::Uniform, "Uniform"}, {EventDistributionTypes::Dirac, "Dirac"},
                 {EventDistributionTypes::Erlang, "Erlang"}};     
 
